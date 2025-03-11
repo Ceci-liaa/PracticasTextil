@@ -12,6 +12,9 @@ use App\Http\Controllers\RoleController;
 
 
 
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -89,9 +92,26 @@ Route::post('/reset-password', [ResetPasswordController::class, 'store'])
     ->middleware('guest');
 
 Route::get('/laravel-examples/user-profile', [ProfileController::class, 'index'])->name('users.profile')->middleware('auth');
-Route::put('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])->name('users.update')->middleware('auth');
-Route::get('/laravel-examples/users-management', [UserController::class, 'index'])->name('users-management')->middleware('auth');
+// Route::put('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])->name('users.update')->middleware('auth');
+// Route::get('/laravel-examples/users-management', [UserController::class, 'index'])->name('users-management')->middleware('auth');
 
 // roles
 Route::resource('roles', RoleController::class)->middleware(['auth']);
 Route::resource('roles', RoleController::class);
+
+// Roles y user
+Route::get('users/{user}/edit-role', [UserController::class, 'editRole'])->name('users.editRole');
+Route::put('users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
+
+
+
+//User routes
+Route::get('/user/users-management', [UserController::class, 'index'])->name('users-management');
+Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{user}/update', [UserController::class, 'update'])->name('users.update');
+
+// redireccionar rutas
+Route::put('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+
+
+
