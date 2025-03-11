@@ -29,7 +29,7 @@
                                             {{ auth()->user()->name }}
                                         </h5>
                                         <p class="mb-0 font-weight-bold text-sm">
-                                            Aqui debe de ir el rol del usuario
+                                            Aqui debe de ir el rol que tiene el usuario
                                         </p>
                                     </div>
                                 </div>
@@ -66,13 +66,13 @@
                     <div class="col-lg-9 col-12 ">
                         <div class="card " id="basic-info">
                             <div class="card-header">
-                                <h5>Información Básica</h5>
+                                <h5>Informacion Basica</h5>
                             </div>
                             <div class="pt-0 card-body">
 
                                 <div class="row">
                                     <div class="col-6">
-                                        <label for="name">Nombres Completos</label>
+                                        <label for="name">Name</label>
                                         <input type="text" name="name" id="name"
                                             value="{{ old('name', auth()->user()->name) }}" class="form-control">
                                         @error('name')
@@ -80,7 +80,7 @@
                                         @enderror
                                     </div>
                                     <div class="col-6">
-                                        <label for="email">Correo</label>
+                                        <label for="email">Email</label>
                                         <input type="email" name="email" id="email"
                                             value="{{ old('email', auth()->user()->email) }}" class="form-control">
                                         @error('email')
@@ -90,7 +90,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
-                                        <label for="location">Locación</label>
+                                        <label for="location">Location</label>
                                         <input type="text" name="location" id="location"
                                             placeholder="Bucharest, Romania"
                                             value="{{ old('location', auth()->user()->location) }}"
@@ -101,7 +101,7 @@
                                     </div>
 
                                     <div class="col-6">
-                                        <label for="phone">Teléfono</label>
+                                        <label for="phone">Phone</label>
                                         <input type="text" name="phone" id="phone" placeholder="0733456987"
                                             value="{{ old('phone', auth()->user()->phone) }}" class="form-control">
                                         @error('phone')
@@ -110,13 +110,14 @@
                                     </div>
                                 </div>
                                 <div class="row p-2">
-                                    <label for="about">Acerca de mi</label>
+                                    <label for="about">About me</label>
                                     <textarea name="about" id="about" rows="5" class="form-control">{{ old('about', auth()->user()->about) }}</textarea>
                                     @error('about')
                                         <span class="text-danger text-sm">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <button type="submit" class="mt-6 mb-0 btn btn-white btn-sm float-end">Guardar cambios</button>
+                                <button type="submit" class="mt-6 mb-0 btn btn-white btn-sm float-end">Save
+                                    changes</button>
                             </div>
                         </div>
                     </div>
