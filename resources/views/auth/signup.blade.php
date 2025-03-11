@@ -66,7 +66,7 @@
                                         <label>Nombres completos</label>
                                         <div class="mb-3">
                                             <input type="text" id="name" name="name" class="form-control"
-                                                placeholder="Enter your name" value="{{old("name")}}" aria-label="Name"
+                                                placeholder="Ingrese su nombre completo" value="{{old("name")}}" aria-label="Name"
                                                 aria-describedby="name-addon">
                                             @error('name')
                                                 <span class="text-danger text-sm">{{ $message }}</span>
@@ -75,7 +75,7 @@
                                         <label>Correo</label>
                                         <div class="mb-3">
                                             <input type="email" id="email" name="email" class="form-control"
-                                                placeholder="Enter your email address" value="{{old("email")}}" aria-label="Email"
+                                                placeholder="Ingrese su correo" value="{{old("email")}}" aria-label="Email"
                                                 aria-describedby="email-addon">
                                             @error('email')
                                                 <span class="text-danger text-sm">{{ $message }}</span>
@@ -84,7 +84,7 @@
                                         <label>Contraseña</label>
                                         <div class="mb-3">
                                             <input type="password" id="password" name="password" class="form-control"
-                                                placeholder="Create a password" aria-label="Password"
+                                                placeholder="Crea una contraseña" aria-label="Password"
                                                 aria-describedby="password-addon">
                                             @error('password')
                                                 <span class="text-danger text-sm">{{ $message }}</span>
