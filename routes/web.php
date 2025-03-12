@@ -104,11 +104,10 @@ Route::get('users/{user}/edit-role', [UserController::class, 'editRole'])->name(
 Route::put('users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
 
 
-
 //User routes
 Route::get('/user/users-management', [UserController::class, 'index'])->name('users-management');
-Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-Route::put('/users/{user}/update', [UserController::class, 'update'])->name('users.update');
+Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/user/{user}/update', [UserController::class, 'update'])->name('users.update');
 
 // redireccionar rutas
 Route::put('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');

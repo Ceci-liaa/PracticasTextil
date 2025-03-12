@@ -11,15 +11,15 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('roles')->get();
-        return view('laravel-examples.users-management', compact('users'));
+        return view('user.users-management', compact('users'));
     }
 
-    // Mostrar formulario para asignar rol
-    public function editRole(User $user)
-    {
-        $roles = Role::all();
-        return view('users.edit-role', compact('user', 'roles'));
-    }
+    // // Mostrar formulario para asignar rol
+    // public function editRole(User $user)
+    // {
+    //     $roles = Role::all();
+    //     return view('users.edit-role', compact('user', 'roles'));
+    // }
 
     // Actualizar rol del usuario
     public function updateRole(Request $request, User $user)
@@ -60,4 +60,14 @@ class UserController extends Controller
 
         return redirect()->route('users-management')->with('success', 'Estado actualizado correctamente.');
     }
+
+
+    // Mostrar formulario de edición
+
+    public function edit(User $user)
+    {
+        $roles = Role::all(); // Obtiene todos los roles disponibles
+        return view('user.user-edit', compact('user', 'roles')); // Retorna la vista de edición
+    }
+
 }
