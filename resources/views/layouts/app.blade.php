@@ -1,17 +1,3 @@
-<!--
-=========================================================
-* Corporate UI - v1.0.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/corporate-ui
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://www.creative-tim.com/license)
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,26 +35,56 @@
         <meta property="product:category" content="Admin &amp; Dashboards">
         <meta name="data-turbolinks-track" content="false">
     @endif
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+
+    <!-- antiguo -->
+    <!-- <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png"> -->
+
+    <!-- nuevo -->
+     <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+
     <!-- Google Material Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Noto+Sans:300,400,500,600,700,800|PT+Mono:300,400,500,600,700" rel="stylesheet" /> -->
+
 
     <title>
         Corporate UI by Creative Tim & UPDIVISION
     </title>
-    <!--     Fonts and icons     -->
-    <link
+    <!--     Fonts and icons    antiguo -->
+    <!-- <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Noto+Sans:300,400,500,600,700,800|PT+Mono:300,400,500,600,700"
-        rel="stylesheet" />
-    <!-- Nucleo Icons -->
-    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
-    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <!-- Font Awesome Icons -->
+        rel="stylesheet" /> -->
+
+    <!-- Fonts and icons nuevo-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Noto+Sans:300,400,500,600,700,800|PT+Mono:300,400,500,600,700" rel="stylesheet" />
+
+    <!-- Nucleo Icons antiguo -->
+    <!-- <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" /> -->
+
+    <!-- Nucleo Icons nuevo-->
+    <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+
+    <!-- Font Awesome Icons antiguo-->
+    <!-- <script src="https://kit.fontawesome.com/349ee9c857.js" crossorigin="anonymous"></script>
+    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" /> -->
+
+    <!-- Font Awesome Icons nuevo-->
     <script src="https://kit.fontawesome.com/349ee9c857.js" crossorigin="anonymous"></script>
-    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <!-- CSS Files -->
+    <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+
+    <!-- CSS Files antiguo-->
     <link id="pagestyle" href="../assets/css/corporate-ui-dashboard.css?v=1.0.0" rel="stylesheet" />
+
+    <!-- CSS Files nuevo-->
+    <link id="pagestyle" href="{{ asset('assets/css/corporate-ui-dashboard.css') }}?v=1.0.0" rel="stylesheet" />
+
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
@@ -99,6 +115,7 @@
             <div class="card-header pb-0 pt-3 ">
                 <div class="float-start">
                     <h5 class="mt-3 mb-0">Configuración</h5>
+                    <br>
                     <p>Observa nuestras opciones de dashboard.</p>
                 </div>
                 <div class="float-end mt-4">
@@ -111,7 +128,7 @@
             <hr class="horizontal dark my-1">
             <div class="card-body pt-sm-3 pt-0">
                 <!-- Sidebar Backgrounds -->
-                <div>
+                <!-- <div>
                     <h6 class="mb-0">Colores del icono de Dashboard</h6>
                 </div>
                 <a href="javascript:void(0)" class="switch-trigger background-color">
@@ -127,7 +144,7 @@
                         <span class="badge filter bg-gradient-danger" data-color="danger"
                             onclick="sidebarColor(this)"></span>
                     </div>
-                </a>
+                </a> -->
                 <!-- Sidenav Type -->
                 <div class="mt-3">
                     <h6 class="mb-0">Tipo de Navegación lateral</h6>
@@ -151,13 +168,22 @@
             </div>
         </div>
     </div>
-    <!--   Core JS Files   -->
-    <script src="../assets/js/core/popper.min.js"></script>
+    <!--   Core JS Files antiguo  -->
+    <!-- <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/chartjs.min.js"></script>
-    <script src="../assets/js/plugins/swiper-bundle.min.js" type="text/javascript"></script>
+    <script src="../assets/js/plugins/swiper-bundle.min.js" type="text/javascript"></script> -->
+
+    <!-- Core JS Files nuevo-->
+    <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/swiper-bundle.min.js') }}" type="text/javascript"></script>
+
     <script>
         if (document.getElementsByClassName('mySwiper')) {
             var swiper = new Swiper(".mySwiper", {
@@ -423,8 +449,12 @@
     </script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <!-- Control Center for Corporate UI Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="../assets/js/corporate-ui-dashboard.min.js?v=1.0.0"></script>
+    <!-- Control Center for Corporate UI Dashboard: parallax effects, scripts for the example pages etc antigou-->
+    <!-- <script src="../assets/js/corporate-ui-dashboard.min.js?v=1.0.0"></script> -->
+
+    <!-- Control Center for Corporate UI Dashboard Nuevo-->
+    <script src="{{ asset('assets/js/corporate-ui-dashboard.min.js') }}?v=1.0.0"></script>
+
 </body>
 
 </html>

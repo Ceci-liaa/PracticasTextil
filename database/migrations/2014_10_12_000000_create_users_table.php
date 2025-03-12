@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('location')->nullable();
             $table->text('about')->nullable();
+            $table->string('role')->default('usuario'); // Campo para rol (usuario por defecto)
+            $table->boolean('status')->default(true); // Campo para estado (activo por defecto)
             $table->rememberToken();
             $table->timestamps();
         });

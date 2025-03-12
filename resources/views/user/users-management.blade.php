@@ -5,26 +5,46 @@
         <div class="px-5 py-4 container-fluid">
             <div class="mt-4 row">
                 <div class="col-12">
-                    <div class="alert alert-dark text-sm" role="alert">
-                        <strong>Editar, Asignar Roles y Cambiar Estado</strong> 
+                    <!-- 🔹 TÍTULO SIEMPRE VISIBLE -->
+                    <div class="alert alert-dark text-sm" role="alert" style="margin-bottom: 1rem;">
+                        <strong style="font-size: 24px;">Gestión de Usuarios</strong>
                     </div>
+
+                    <!-- 🔹 MENSAJES TEMPORALES QUE SE OCULTAN DESPUÉS DE 3 SEGUNDOS -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show alert-temporal" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if (session('info'))
+                        <div class="alert alert-warning alert-dismissible fade show alert-temporal" role="alert">
+                            {{ session('info') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show alert-temporal" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <div class="card">
                         <div class="pb-0 card-header">
-                            <h5 class="">Gestión de Usuarios</h5>
-                            <p class="mb-0 text-sm">
-                                Aquí puedes gestionar a los Usuarios.
-                            </p>
+                            <h5 class="">Usuarios</h5>
                         </div>
 
-                        <div class="table-responsive">
-                            <table class="table text-secondary text-center">
-                                <thead>
+                        <!-- 🔹 Hacemos la tabla 100% responsiva -->
+                        <div class="table-responsive" style="overflow-x: auto;">
+                            <table class="table table-hover table-bordered text-center">
+                                <thead class="table-dark">
                                     <tr>
                                         <th>ID</th>
                                         <th>Nombre</th>
                                         <th>Email</th>
                                         <th>Teléfono</th>
-                                        <th>Rol</th>
+                                        <th>Ubicación</th> <!-- Nueva columna -->
+                                        <th>Rol</th> <!-- Se mantiene el rol -->
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -36,28 +56,41 @@
                                             <td>{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->phone ?? 'N/A' }}</td>
-                                            <td>{{ $user->roles->pluck('name')->join(', ') }}</td>
+                                            <td>{{ $user->location ?? 'No especificada' }}</td> <!-- Nueva fila -->
+                                            <td>{{ $user->roles->pluck('name')->join(', ') }}</td> <!-- Se obtiene el rol del usuario -->
                                             <td>
-                                                <form action="{{ route('users.toggle-status', $user) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" class="btn btn-sm {{ $user->active ? 'btn-success' : 'btn-danger' }}">
-                                                        {{ $user->active ? 'Activo' : 'Inactivo' }}
-                                                    </button>
-                                                </form>
+                                                <div class="p-1 text-white rounded" 
+                                                     style="background-color: {{ $user->status ? '#28a745' : '#dc3545' }};">
+                                                    {{ $user->status ? 'Activo' : 'Inactivo' }}
+                                                </div>
                                             </td>
                                             <td>
-                                                <a href="{{ route('users.edit', $user) }}" class="btn btn-primary btn-sm">Editar</a>
+                                                <a href="{{ route('users.edit', $user) }}" class="btn btn-primary btn-sm">
+                                                    Editar
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>
+                        </div> <!-- Fin de la tabla responsiva -->
                     </div>
                 </div>
             </div>
         </div>
+        
         <x-app.footer />
+
+        <!-- 🔹 Script para ocultar SOLO los mensajes después de 3 segundos -->
+        <script>
+            setTimeout(function() {
+                document.querySelectorAll('.alert-temporal').forEach(alert => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 3000);
+        </script>
+
     </main>
 </x-app-layout>

@@ -38,19 +38,39 @@ class UserController extends Controller
             'location' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
             'about' => 'nullable|string',
+            'status' => 'required|boolean',
+            'role' => 'required|string|exists:roles,name',
         ]);
-
-        // Actualizar los datos del usuario
-        $user->update([
+    
+        // Verificar si hay cambios en los datos
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
             'location' => $request->location,
             'phone' => $request->phone,
             'about' => $request->about,
-        ]);
-
-        return redirect()->route('users.profile')->with('success', 'Perfil actualizado correctamente.');
+            'status' => $request->status,
+        ];
+    
+        if ($user->only(array_keys($data)) === $data && $user->roles->pluck('name')->first() === $request->role) {
+            return redirect()->route('users-management')->with('info', 'No se realizaron cambios.');
+        }
+    
+        try {
+            // Actualizar los datos del usuario
+            $user->update($data);
+    
+            // Actualizar el rol solo si es diferente
+            if (!$user->hasRole($request->role)) {
+                $user->syncRoles([$request->role]);
+            }
+    
+            return redirect()->route('users-management')->with('success', 'Usuario actualizado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->route('users-management')->with('error', 'Error al actualizar la información.');
+        }
     }
+    
 
     // Alternar estado del usuario (Activo/Inactivo)
     public function toggleStatus(User $user)
