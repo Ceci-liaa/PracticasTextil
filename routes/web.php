@@ -91,20 +91,23 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create']
 Route::post('/reset-password', [ResetPasswordController::class, 'store'])
     ->middleware('guest');
 
+
+// Profile
+// 1️⃣ Mostrar la vista del perfil del usuario autenticado
 Route::get('/laravel-examples/user-profile', [ProfileController::class, 'index'])->name('users.profile')->middleware('auth');
-// Route::put('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])->name('users.update')->middleware('auth');
-// Route::get('/laravel-examples/users-management', [UserController::class, 'index'])->name('users-management')->middleware('auth');
+// 2️⃣ Procesar la actualización del perfil del usuario autenticado
+Route::put('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])->name('users.profile.update')->middleware('auth');
 
 // roles
 Route::resource('roles', RoleController::class)->middleware(['auth']);
 Route::resource('roles', RoleController::class);
 
 // Roles y user
-Route::get('users/{user}/edit-role', [UserController::class, 'editRole'])->name('users.editRole');
-Route::put('users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
+// Route::get('users/{user}/edit-role', [UserController::class, 'editRole'])->name('users.editRole');
+// Route::put('users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
 
 
-//User routes
+//User routes gestion de usuarios (Admin)
 Route::get('/user/users-management', [UserController::class, 'index'])->name('users-management');
 Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/user/{user}/update', [UserController::class, 'update'])->name('users.update');

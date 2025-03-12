@@ -83,13 +83,15 @@
 
         <!-- 🔹 Script para ocultar SOLO los mensajes después de 3 segundos -->
         <script>
-            setTimeout(function() {
-                document.querySelectorAll('.alert-temporal').forEach(alert => {
-                    alert.classList.remove('show');
-                    alert.classList.add('fade');
-                    setTimeout(() => alert.remove(), 500);
-                });
-            }, 3000);
+            document.addEventListener("DOMContentLoaded", function () {
+                setTimeout(function () {
+                    document.querySelectorAll('.alert-temporal').forEach(alert => {
+                        alert.style.transition = "opacity 0.5s";
+                        alert.style.opacity = 0;
+                        setTimeout(() => alert.remove(), 500);
+                    });
+                }, 3000);
+            });
         </script>
 
     </main>

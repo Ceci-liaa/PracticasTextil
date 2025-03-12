@@ -6,42 +6,37 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class ProfileController extends Controller
 {
+    // 🔹 Mostrar la vista del perfil del usuario autenticado
     public function index()
     {
-        $user = User::find(Auth::id());
-
+        $user = Auth::user();
         return view('laravel-examples.user-profile', compact('user'));
     }
 
+    // 🔹 Procesar la actualización del perfil del usuario autenticado
     public function update(Request $request)
     {
-        if (config('app.is_demo') && in_array(Auth::id(), [1])) {
-            return back()->with('error', "You are in a demo version. You are not allowed to change the email for default users.");
-        }
+        $user = Auth::user();
 
+        // Validar datos
         $request->validate([
-            'name' => 'required|min:3|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
-            'location' => 'max:255',
-            'phone' => 'numeric|digits:10',
-            'about' => 'max:255',
-        ], [
-            'name.required' => 'Name is required',
-            'email.required' => 'Email is required',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'location' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'about' => 'nullable|string',
         ]);
 
-        $user = User::find(Auth::id());
+        try {
+            // Actualizar datos
+            $user->update($request->only(['name', 'email', 'location', 'phone', 'about']));
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'location' => $request->location,
-            'phone' => $request->phone,
-            'about' => $request->about,
-        ]);
-
-        return back()->with('success', 'Profile updated successfully.');
+            return redirect()->route('users.profile')->with('success', 'Perfil actualizado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al actualizar el perfil.');
+        }
     }
 }

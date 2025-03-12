@@ -22,16 +22,9 @@ class UserController extends Controller
     // }
 
     // Actualizar rol del usuario
-    public function updateRole(Request $request, User $user)
-    {
-        $user->syncRoles($request->role);
-        return redirect()->route('users.editRole', $user)->with('success', 'Rol actualizado correctamente.');
-    }
-
-    // Editar usuario
     public function update(Request $request, User $user)
     {
-        // Validar los datos antes de actualizar
+        // Validación de los datos
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
@@ -42,32 +35,33 @@ class UserController extends Controller
             'role' => 'required|string|exists:roles,name',
         ]);
     
-        // Verificar si hay cambios en los datos
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'location' => $request->location,
-            'phone' => $request->phone,
-            'about' => $request->about,
-            'status' => $request->status,
-        ];
+        // Datos a actualizar
+        $data = $request->only(['name', 'email', 'location', 'phone', 'about', 'status']);
     
+        // Verificar si hay cambios
         if ($user->only(array_keys($data)) === $data && $user->roles->pluck('name')->first() === $request->role) {
-            return redirect()->route('users-management')->with('info', 'No se realizaron cambios.');
+            return redirect()->back()->with('info', 'No se realizaron cambios.');
         }
     
         try {
-            // Actualizar los datos del usuario
+            // Actualizar el usuario
             $user->update($data);
     
-            // Actualizar el rol solo si es diferente
+            // Actualizar rol solo si es diferente
             if (!$user->hasRole($request->role)) {
                 $user->syncRoles([$request->role]);
             }
     
-            return redirect()->route('users-management')->with('success', 'Usuario actualizado correctamente.');
+            // Verificar si es la edición del perfil o de otro usuario
+            if ($request->has('profile_update')) {
+                // Si viene desde la edición del perfil
+                return redirect()->route('user-profile')->with('success', 'Perfil actualizado correctamente.');
+            } else {
+                // Si viene desde la edición de otro usuario
+                return redirect()->route('users-management')->with('success', 'Usuario actualizado correctamente.');
+            }
         } catch (\Exception $e) {
-            return redirect()->route('users-management')->with('error', 'Error al actualizar la información.');
+            return redirect()->back()->with('error', 'Error al actualizar la información.');
         }
     }
     

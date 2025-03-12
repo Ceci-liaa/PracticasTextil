@@ -9,6 +9,25 @@
                         <strong style="font-size: 24px;">Editar Usuario</strong>
                     </div>
                     <div class="card">
+                        <!-- 🔹 Mostrar mensajes de éxito, error o advertencia -->
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if (session('info'))
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                {{ session('info') }}
+                            </div>
+                        @endif
+
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
                         <form action="{{ route('users.update', $user) }}" method="POST">
                             @csrf
                             @method('PUT')
@@ -61,6 +80,7 @@
                             <button type="submit" class="btn btn-primary mt-4">Guardar Cambios</button>
                         </form>
                     </div>
+
                 </div>
             </div>
         </div>
