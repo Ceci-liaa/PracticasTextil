@@ -6,7 +6,7 @@
             <div class="mt-4 row">
                 <div class="col-12">
                     <div class="alert alert-dark text-sm" role="alert">
-                        <strong>Editar, Asignar Roles y Cambiar Estado de Usuarios</strong> 
+                        <strong>Editar, Asignar Roles y Cambiar Estado</strong> 
                     </div>
                     <div class="card">
                         <div class="pb-0 card-header">
