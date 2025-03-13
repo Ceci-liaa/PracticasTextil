@@ -85,6 +85,9 @@
     <!-- CSS Files nuevo-->
     <link id="pagestyle" href="{{ asset('assets/css/corporate-ui-dashboard.css') }}?v=1.0.0" rel="stylesheet" />
 
+    <!-- Incluir SweetAlert2 en tu Proyecto -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">

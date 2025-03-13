@@ -150,13 +150,13 @@
                 </div>
             </li>
 
+            <!-- Nuevo para ver como explorador de archivos  -->
             <li class="nav-item border-start my-0 pt-2">
-                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('profile') ? 'active' : '' }}"
-                    href="{{ route('profile') }}">
-                    <span class="nav-link-text ms-1">Perfil</span>
+                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ request()->routeIs('folders.explorer') ? 'active' : '' }}"
+                    href="{{ route('folders.explorer') }}">
+                    <span class="nav-link-text ms-1">Explorador de Archivos</span>
                 </a>
             </li>
-
                         <!-- Nuevo para el perfil del Usuario-->
                         <li class="nav-item mt-2">
                 <div class="d-flex align-items-center nav-link">

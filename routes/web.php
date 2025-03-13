@@ -109,9 +109,15 @@ Route::put('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'
 Route::get('/folders', [FolderController::class, 'index'])->name('folders.index'); // muestra todas las carpetas y subcarpetas disponibles
 Route::get('/folders/create', [FolderController::class, 'create'])->name('folders.create');
 Route::post('/folders', [FolderController::class, 'store'])->name('folders.store'); // Guarda la carpeta creada
-Route::get('/folders/{id}', [FolderController::class, 'show'])->name('folders.show');  // Muestra los archivos dentro de la carpeta seleccionada.
+Route::get('/folders/folders-management/{folder}', [FolderController::class, 'show'])->name('folders.show');
 Route::get('/folders/{folder}/edit', [FolderController::class, 'edit'])->name('folders.edit'); // Edita la carpeta seleccionada
 Route::put('/folders/{folder}', [FolderController::class, 'update'])->name('folders.update'); // Actualiza la carpeta seleccionada
 Route::delete('/folders/{folder}', [FolderController::class, 'destroy'])->name('folders.destroy'); // Elimina la carpeta seleccionada
+
+
+// Ruta del explorador de archivos
+// Mostrar los archivos dentro de la carpeta seleccionada
+Route::get('/explorer/{folder?}', [FolderController::class, 'explorer'])->name('folders.explorer');
+
 
 

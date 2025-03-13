@@ -20,14 +20,13 @@ class FolderController extends Controller
     // Muestras todas las carpetas que existen
     public function index()
     {
-        $folders = Folder::with('parent', 'user')->get(); // Obtiene todas las carpetas con sus relaciones
+        $folders = Folder::with('parent', 'user')->orderBy('created_at', 'asc')->get(); // Ordena por fecha de creación
         return view('folders.folders-management', compact('folders'));
     }
 
     // Muestra los archivos dentro de la carpeta seleccionada.
-    public function show($id)
+    public function show(Folder $folder)
     {
-        $folder = Folder::with('subfolders', 'files')->findOrFail($id);
         return view('folders.show-folder', compact('folder'));
     }
 
@@ -38,7 +37,23 @@ class FolderController extends Controller
         return view('folders.create-folder', compact('folders'));
     }
 
-    // Guardar una carpeta 
+    // Guardar una carpeta Antiguo
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'parent_id' => 'nullable|exists:folders,id',
+    //     ]);
+
+    //     Folder::create([
+    //         'name' => $request->name,
+    //         'parent_id' => $request->parent_id,
+    //         'user_id' => auth()->id(),
+    //     ]);
+
+    //     return redirect()->route('folders.index')->with('success', 'Carpeta creada correctamente.');
+    // }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -46,14 +61,24 @@ class FolderController extends Controller
             'parent_id' => 'nullable|exists:folders,id',
         ]);
 
+        // ❌ Evitar nombres duplicados dentro de la misma carpeta padre
+        $exists = Folder::where('name', $request->name)
+            ->where('parent_id', $request->parent_id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación. Por favor, elija otro nombre.');
+        }
+
         Folder::create([
             'name' => $request->name,
             'parent_id' => $request->parent_id,
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('folders.index')->with('success', 'Carpeta creada correctamente.');
+        return redirect()->route('folders.index')->with('success', '✅ Carpeta creada correctamente.');
     }
+
 
     // Editar una carpeta
     public function edit(Folder $folder)
@@ -62,21 +87,57 @@ class FolderController extends Controller
         return view('folders.edit-folder', compact('folder', 'folders'));
     }
     
-    // Actualizar una carpeta
+    // Actualizar una carpeta Antiguo
+    // public function update(Request $request, Folder $folder)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'parent_id' => 'nullable|exists:folders,id',
+    //     ]);
+
+    //     $folder->update([
+    //         'name' => $request->name,
+    //         'parent_id' => $request->parent_id,
+    //     ]);
+
+    //     return redirect()->route('folders.index')->with('success', 'Carpeta actualizada correctamente.');
+    // }
+
     public function update(Request $request, Folder $folder)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'parent_id' => 'nullable|exists:folders,id',
         ]);
-
+    
+        // ❌ Evitar nombres duplicados dentro de la misma carpeta padre
+        $exists = Folder::where('name', $request->name)
+            ->where('parent_id', $request->parent_id)
+            ->where('id', '!=', $folder->id) // Excluir la misma carpeta en la comparación
+            ->exists();
+    
+        if ($exists) {
+            return redirect()->back()->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación. Por favor, elija otro nombre.');
+        }
+    
+        // ❌ No permitir que la carpeta se seleccione a sí misma como padre
+        if ($request->parent_id == $folder->id) {
+            return redirect()->back()->with('error', 'Una carpeta no puede ser su propio padre.');
+        }
+    
+        // ❌ No permitir que una carpeta padre se mueva dentro de una de sus subcarpetas
+        if ($this->isMovingIntoChild($folder->id, $request->parent_id)) {
+            return redirect()->back()->with('error', 'No puedes mover una carpeta dentro de una de sus subcarpetas.');
+        }
+    
         $folder->update([
             'name' => $request->name,
             'parent_id' => $request->parent_id,
         ]);
-
-        return redirect()->route('folders.index')->with('success', 'Carpeta actualizada correctamente.');
+    
+        return redirect()->route('folders.index')->with('success', '✅ Carpeta actualizada correctamente.');
     }
+    
 
     // Eliminar una carpeta
     public function destroy(Folder $folder)
@@ -89,4 +150,40 @@ class FolderController extends Controller
         }
     }
 
+    /**
+     * Función que verifica si una carpeta intenta moverse dentro de una de sus subcarpetas
+    */
+    private function isMovingIntoChild($folderId, $newParentId)
+    {
+        if (!$newParentId) {
+            return false; // Si no hay un nuevo padre, no hay problema
+        }
+
+        $parent = Folder::find($newParentId);
+
+        while ($parent) {
+            if ($parent->id == $folderId) {
+                return true; // Se encontró la carpeta padre en la jerarquía de subcarpetas
+            }
+            $parent = $parent->parent;
+        }
+
+        return false;
+    }
+
+
+    // Explorar carpetas y archivos
+    public function explorer(Folder $folder = null)
+    {
+        if ($folder) {
+            $subfolders = Folder::where('parent_id', $folder->id)->get();
+            $files = collect(); // Agregamos esta línea para evitar el error
+        } else {
+            $subfolders = Folder::whereNull('parent_id')->get();
+            $files = collect();
+        }
+    
+        return view('folders.explorer', compact('folder', 'subfolders', 'files'));
+    }
+    
 }

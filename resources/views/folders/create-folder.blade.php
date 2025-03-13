@@ -9,6 +9,32 @@
                         <strong style="font-size: 24px;">Crear Nueva Carpeta</strong>
                     </div>
 
+                    <!-- 🔹 Mensajes de error y éxito
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show fade-message" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif -->
+
+                    🔹 Mensajes de error y éxito
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show fade-message" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
                     <div class="card">
                         <div class="card-body">
                             <form action="{{ route('folders.store') }}" method="POST">
@@ -37,7 +63,19 @@
                 </div>
             </div>
         </div>
-
         <x-app.footer />
     </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
+                document.querySelectorAll('.fade-message').forEach(alert => {
+                    alert.style.transition = "opacity 0.5s";
+                    alert.style.opacity = 0;
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 5000); // Desaparece después de 5 segundos
+        });
+    </script>
+
 </x-app-layout>
