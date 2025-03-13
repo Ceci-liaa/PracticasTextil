@@ -8,12 +8,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\RoleController;
-
-
-
-
-
-
+use App\Http\Controllers\FolderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,11 +97,6 @@ Route::put('/laravel-examples/user-profile/update', [ProfileController::class, '
 Route::resource('roles', RoleController::class)->middleware(['auth']);
 Route::resource('roles', RoleController::class);
 
-// Roles y user
-// Route::get('users/{user}/edit-role', [UserController::class, 'editRole'])->name('users.editRole');
-// Route::put('users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
-
-
 //User routes gestion de usuarios (Admin)
 Route::get('/user/users-management', [UserController::class, 'index'])->name('users-management');
 Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
@@ -115,5 +105,13 @@ Route::put('/user/{user}/update', [UserController::class, 'update'])->name('user
 // redireccionar rutas
 Route::put('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
+//Folder routes
+Route::get('/folders', [FolderController::class, 'index'])->name('folders.index'); // muestra todas las carpetas y subcarpetas disponibles
+Route::get('/folders/create', [FolderController::class, 'create'])->name('folders.create');
+Route::post('/folders', [FolderController::class, 'store'])->name('folders.store'); // Guarda la carpeta creada
+Route::get('/folders/{id}', [FolderController::class, 'show'])->name('folders.show');  // Muestra los archivos dentro de la carpeta seleccionada.
+Route::get('/folders/{folder}/edit', [FolderController::class, 'edit'])->name('folders.edit'); // Edita la carpeta seleccionada
+Route::put('/folders/{folder}', [FolderController::class, 'update'])->name('folders.update'); // Actualiza la carpeta seleccionada
+Route::delete('/folders/{folder}', [FolderController::class, 'destroy'])->name('folders.destroy'); // Elimina la carpeta seleccionada
 
 
