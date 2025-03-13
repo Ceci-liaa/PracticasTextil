@@ -57,7 +57,15 @@
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->phone ?? 'N/A' }}</td>
                                             <td>{{ $user->location ?? 'No especificada' }}</td> <!-- Nueva fila -->
-                                            <td>{{ $user->roles->pluck('name')->join(', ') }}</td> <!-- Se obtiene el rol del usuario -->
+                                            <td>
+                                                @if($user->roles->isNotEmpty())
+                                                    {{ $user->roles->pluck('name')->implode(', ') }}
+                                                @else
+                                                    <span class="text-danger">Sin Rol</span>
+                                                @endif
+                                            </td>
+
+                                            <!-- Se obtiene el rol del usuario -->
                                             <td>
                                                 <div class="p-1 text-white rounded" 
                                                      style="background-color: {{ $user->status ? '#28a745' : '#dc3545' }};">

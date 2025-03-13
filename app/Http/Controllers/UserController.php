@@ -10,21 +10,15 @@ class UserController extends Controller
 {
     public function index()
     {
+        // Asegurar que los roles se carguen con los usuarios
         $users = User::with('roles')->get();
+
         return view('user.users-management', compact('users'));
     }
 
-    // // Mostrar formulario para asignar rol
-    // public function editRole(User $user)
-    // {
-    //     $roles = Role::all();
-    //     return view('users.edit-role', compact('user', 'roles'));
-    // }
-
-    // Actualizar rol del usuario
     public function update(Request $request, User $user)
     {
-        // Validación de los datos
+        // Validar los datos antes de actualizar
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
@@ -32,56 +26,52 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'about' => 'nullable|string',
             'status' => 'required|boolean',
-            'role' => 'required|string|exists:roles,name',
+            'role' => 'required|string|exists:roles,name', // Validar que el rol existe en la tabla roles
         ]);
-    
-        // Datos a actualizar
-        $data = $request->only(['name', 'email', 'location', 'phone', 'about', 'status']);
-    
-        // Verificar si hay cambios
-        if ($user->only(array_keys($data)) === $data && $user->roles->pluck('name')->first() === $request->role) {
-            return redirect()->back()->with('info', 'No se realizaron cambios.');
-        }
-    
+
         try {
-            // Actualizar el usuario
-            $user->update($data);
-    
-            // Actualizar rol solo si es diferente
-            if (!$user->hasRole($request->role)) {
-                $user->syncRoles([$request->role]);
-            }
-    
-            // Verificar si es la edición del perfil o de otro usuario
-            if ($request->has('profile_update')) {
-                // Si viene desde la edición del perfil
-                return redirect()->route('user-profile')->with('success', 'Perfil actualizado correctamente.');
+            // 🔹 Obtener el ID del nuevo rol desde la tabla roles
+            $role = Role::where('name', $request->role)->where('guard_name', 'web')->first();
+
+            if ($role) {
+                // 🔥 ACTUALIZAR EL CAMPO `role` EN `users`
+                $user->update([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'location' => $request->location,
+                    'phone' => $request->phone,
+                    'about' => $request->about,
+                    'status' => $request->status,
+                    'role' => $role->name, // 🔥 Aquí forzamos que el campo `role` en `users` se actualice
+                ]);
+
+                // 🔥 SINCRONIZAR `model_has_roles`
+                $user->syncRoles([$role->name]); // Esto asegurará que también se actualice en la tabla de roles
+
             } else {
-                // Si viene desde la edición de otro usuario
-                return redirect()->route('users-management')->with('success', 'Usuario actualizado correctamente.');
+                return redirect()->back()->with('error', 'El rol seleccionado no existe en la base de datos.');
             }
+
+            return redirect()->route('users-management')->with('success', 'Usuario actualizado correctamente.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error al actualizar la información.');
+            return redirect()->back()->with('error', 'Error al actualizar la información: ' . $e->getMessage());
         }
     }
-    
 
-    // Alternar estado del usuario (Activo/Inactivo)
     public function toggleStatus(User $user)
     {
-        $user->active = !$user->active; // Cambia de 1 a 0 o viceversa
-        $user->save();
-
-        return redirect()->route('users-management')->with('success', 'Estado actualizado correctamente.');
+        try {
+            $user->status = !$user->status; // Cambia de 1 a 0 o viceversa
+            $user->save();
+            return redirect()->route('users-management')->with('success', 'Estado actualizado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al actualizar el estado.');
+        }
     }
-
-
-    // Mostrar formulario de edición
 
     public function edit(User $user)
     {
-        $roles = Role::all(); // Obtiene todos los roles disponibles
+        $roles = Role::all(); // Obtener todos los roles disponibles
         return view('user.user-edit', compact('user', 'roles')); // Retorna la vista de edición
     }
-
 }
