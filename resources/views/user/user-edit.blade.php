@@ -59,11 +59,11 @@
                             <div class="row mt-3">
                                 <div class="col-md-6">
                                     <label>Rol</label>
-                                    <select name="role" class="form-control">
-                                        @foreach ($roles as $role)
-                                            <option value="{{ $role->name }}" @if($user->hasRole($role->name)) selected @endif>
-                                                {{ ucfirst($role->name) }}
-                                            </option>
+                                    <select name="role_id" class="form-control">
+                                        @foreach ($roles as $roleId => $roleName)
+                                        <option value="{{ $roleId }}" @if($user->role_id == $roleId) selected @endif>
+                                            {{ ucfirst($roleName) }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>

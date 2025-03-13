@@ -32,7 +32,7 @@
                                             {{ auth()->user()->name }}
                                         </h5>
                                         <p class="mb-0 font-weight-bold text-sm">
-                                            {{ auth()->user()->roles->pluck('name')->first() ?? 'Sin Rol' }}
+                                            {{ auth()->user()->userRole->name ?? 'Sin Rol' }}
                                         </p>
                                     </div>
                                 </div>

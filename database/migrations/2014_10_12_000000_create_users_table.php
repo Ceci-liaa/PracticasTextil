@@ -4,32 +4,28 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->string('phone')->nullable();
-            $table->string('location')->nullable();
-            $table->text('about')->nullable();
-            $table->string('role')->default('usuario'); // Campo para rol (usuario por defecto)
-            $table->boolean('status')->default(true); // Campo para estado (activo por defecto)
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('name'); // Nombre del usuario
+            $table->string('email')->unique(); // Email único
+            $table->timestamp('email_verified_at')->nullable(); // Verificación de email
+            $table->string('password'); // Contraseña encriptada
+            $table->string('phone')->nullable(); // Número de teléfono
+            $table->string('location')->nullable(); // Ubicación
+            $table->text('about')->nullable(); // Descripción personal
+            $table->unsignedBigInteger('role_id')->nullable(); // Relación con la tabla roles
+            $table->boolean('status')->default(true); // Estado del usuario (activo/inactivo)
+            $table->rememberToken(); // Token para recordar sesión
+            $table->timestamps(); // Fechas de creación y actualización
+
+            // 🔹 Clave foránea para rol_id, enlazada a roles.id
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
