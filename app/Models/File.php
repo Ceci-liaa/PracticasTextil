@@ -18,14 +18,14 @@ class File extends Model
     ];
 
     // Relaciones
-    public function fileName()
+    public function file_name()
     {
-        return $this->belongsTo(FileName::class, 'file_name_id');
+        return $this->belongsTo(FileName::class, 'file_name_id'); // Verifica que la clave foránea sea la correcta
     }
 
     public function folder()
     {
-        return $this->belongsTo(Folder::class);
+        return $this->belongsTo(Folder::class, 'folder_id');
     }
 
     public function user()

@@ -15,7 +15,7 @@
                                 <li class="list-group-item"><strong>ID:</strong> {{ $file->id }}</li>
                                 <li class="list-group-item"><strong>Nombre Original:</strong> {{ $file->name_original }}</li>
                                 <li class="list-group-item"><strong>Tipo:</strong> {{ $file->type }}</li>
-                                <li class="list-group-item"><strong>Nombre Predefinido:</strong> {{ $file->fileName->name }}</li>
+                                <li class="list-group-item"><strong>Nombre Predefinido:</strong> {{ $file->file_name->name }}</li>
                                 <li class="list-group-item"><strong>Carpeta:</strong> {{ $file->folder->name }}</li>
                                 <li class="list-group-item"><strong>Subido por:</strong> {{ $file->user->name }}</li>
                                 <li class="list-group-item"><strong>Fecha de subida:</strong> {{ $file->created_at }}</li>

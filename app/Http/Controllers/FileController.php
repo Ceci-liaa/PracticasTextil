@@ -55,7 +55,7 @@ class FileController extends Controller
     
     public function show(File $file)
     {
-        $file->load('user', 'fileName', 'folder');
+        $file->load('user', 'file_name', 'folder');
     
         return view('files.show', compact('file'));
     }    

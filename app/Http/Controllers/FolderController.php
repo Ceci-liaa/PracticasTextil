@@ -28,9 +28,12 @@ class FolderController extends Controller
     // Muestra los archivos dentro de la carpeta seleccionada.
     public function show(Folder $folder)
     {
+        // Cargar relaciones de subcarpetas y archivos
+        $folder->load(['subfolders', 'files']);
+    
         return view('folders.show-folder', compact('folder'));
-    }
-
+    }    
+    
     // Crear una carpeta
     public function create()
     {
