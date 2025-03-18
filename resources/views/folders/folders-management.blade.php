@@ -28,7 +28,8 @@
                                             <th>Nombre</th>
                                             <th>Carpeta Padre</th>
                                             <th>Creado por</th>
-                                            <th>Fecha/hora</th>
+                                            <th>Fecha Creación</th>
+                                            <th>Fecha Modificación</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -46,6 +47,7 @@
                                                 </td>
                                                 <td>{{ $folder->user->name }}</td>
                                                 <td>{{ $folder->created_at }}</td>
+                                                <td>{{ $folder->updated_at }}</td>
                                                 <td>
                                                     <a href="{{ route('folders.edit', $folder) }}" class="btn btn-primary btn-sm">Editar</a>
                                                     <!-- Botón de eliminar -->

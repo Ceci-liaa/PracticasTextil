@@ -160,16 +160,18 @@ class FolderController extends Controller
 
     public function explorer($id = null)
     {
-        $folder = $id ? Folder::with('parent')->find($id) : null;
-    
+        $folder = $id ? Folder::with(['parent'])->find($id) : null;
+
         if ($id && !$folder) {
             return redirect()->route('folders.explorer')->with('error', 'Carpeta no encontrada.');
         }
-    
+
         $subfolders = Folder::where('parent_id', $id)->get();
-        $files = File::where('folder_id', $id)->get(); // Obtiene archivos de la carpeta actual
-    
+
+        // 🔄 Agregar "file_name" y "user" para asegurarnos de que los cambios se reflejan
+        $files = File::with(['file_name', 'user'])->where('folder_id', $id)->latest()->get();
+
         return view('folders.explorer', compact('folder', 'subfolders', 'files'));
-    }    
+    }
 
 }

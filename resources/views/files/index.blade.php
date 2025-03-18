@@ -43,8 +43,8 @@
                                                 <td>{{ $file->created_at->format('d/m/Y H:i') }}</td> <!-- Formato de fecha -->                                                 
                                                 <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td> <!-- Formato de fecha -->                                                 
                                                 <td>                                                     
-                                                    <a href="{{ route('files.show', $file) }}" class="btn btn-sm btn-info">Ver</a>                                                     
-                                                    <a href="{{ route('files.edit', $file) }}" class="btn btn-primary btn-sm">Editar</a>
+                                                <a href="{{ route('files.show', $file) }}?from={{ request('from') }}" class="btn btn-sm btn-info">Ver</a>
+                                                <a href="{{ route('files.edit', $file) }}?from={{ request('from') }}" class="btn btn-sm btn-warning">Editar</a>
                                                     <!-- Botón de eliminar -->                                                     
                                                     <button type="button" class="btn btn-sm btn-danger" 
                                                         onclick="confirmDelete('{{ $file->id }}', '{{ $file->file_name?->name ?? 'Sin nombre' }}')">                                                         
@@ -52,11 +52,11 @@
                                                     </button>                                                      
                                                     <!-- Formulario oculto para eliminar -->                                                     
                                                     <form id="delete-form-{{ $file->id }}" 
-                                                        action="{{ route('files.destroy', $file->id) }}" 
-                                                        method="POST" style="display: none;">                                                         
-                                                        @csrf                                                         
-                                                        @method('DELETE')                                                     
-                                                    </form>                                                 
+                                                        action="{{ route('files.destroy', $file->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <input type="hidden" name="from" value="{{ request('from') }}"> <!-- Mantiene la ubicación -->
+                                                    </form>
                                                 </td>                                             
                                             </tr>                                         
                                         @endforeach                                     

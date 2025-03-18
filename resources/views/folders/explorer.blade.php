@@ -62,9 +62,11 @@
                                         <thead class="table-dark">
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Nombre Original</th>
+                                                <th>Nombre</th> <!-- Ahora muestra el nombre desde file_names -->
                                                 <th>Tipo</th>
                                                 <th>Usuario</th>
+                                                <th>Fecha Subida</th>
+                                                <th>Fecha Modificación</th>
                                                 <th>Acciones</th>
                                             </tr>
                                         </thead>
@@ -72,25 +74,26 @@
                                             @foreach ($files as $file)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $file->name_original }}</td>
+                                                    <td><strong>{{ $file->file_name?->name ?? 'Sin nombre' }}</strong></td>
                                                     <td>{{ $file->type }}</td>
                                                     <td>{{ $file->user->name }}</td>
+                                                    <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
+                                                    <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td>
                                                     <td>
-                                                        <a href="{{ route('files.show', $file) }}" class="btn btn-sm btn-info">Ver</a>
-                                                        <a href="{{ route('files.edit', $file) }}" class="btn btn-sm btn-warning">Editar</a>
-
+                                                    <a href="{{ route('files.show', $file) }}?from={{ request('from') }}" class="btn btn-sm btn-info">Ver</a>
+                                                    <a href="{{ route('files.edit', $file) }}?from={{ request('from') }}" class="btn btn-sm btn-warning">Editar</a>
                                                         <!-- Botón de eliminar -->
                                                         <button type="button" class="btn btn-sm btn-danger" 
-                                                            onclick="confirmDelete('{{ $file->id }}', '{{ $file->name_original }}')">
+                                                            onclick="confirmDelete('{{ $file->id }}', '{{ $file->file_name?->name ?? 'Sin nombre' }}')">
                                                             🗑 Eliminar
                                                         </button>
 
                                                         <!-- Formulario oculto para eliminar -->
                                                         <form id="delete-form-{{ $file->id }}" 
-                                                            action="{{ route('files.destroy', $file->id) }}" 
-                                                            method="POST" style="display: none;">
+                                                            action="{{ route('files.destroy', $file->id) }}" method="POST">
                                                             @csrf
                                                             @method('DELETE')
+                                                            <input type="hidden" name="from" value="{{ request('from') }}"> <!-- Mantiene la ubicación -->
                                                         </form>
                                                     </td>
                                                 </tr>
@@ -108,7 +111,7 @@
         <x-app.footer />
     </main>
 
-    <!-- ✅ Estilos personalizados (manteniendo el diseño original de carpetas) -->
+    <!-- ✅ Estilos personalizados -->
     <style>
         .breadcrumb-container {
             font-size: 11px;
@@ -130,24 +133,24 @@
         }
 
         .folder-card {
-            background-color: #fff9c4; /* Fondo amarillo claro */
+            background-color: #fff9c4;
             border: 1px solid #ffeb3b;
             border-radius: 10px;
             transition: all 0.3s ease;
         }
 
         .folder-card:hover {
-            background-color: #ffe082; /* Color más intenso al pasar el mouse */
+            background-color: #ffe082;
             transform: scale(1.05);
         }
 
         .folder-icon {
-            color: #fbc02d; /* Amarillo intenso */
+            color: #fbc02d;
         }
 
         .folder-name {
             font-weight: bold;
-            color: #795548; /* Marrón oscuro */
+            color: #795548;
         }
     </style>
 

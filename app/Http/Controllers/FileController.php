@@ -8,13 +8,15 @@ use App\Models\Folder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 
 class FileController extends Controller
 {
     public function index()
     {
-        $files = File::with('user')->latest()->paginate(10);
+    // Cargar archivos sin caché para asegurar que los cambios sean visibles en ambas interfaces
+        $files = File::with('file_name', 'user')->latest()->paginate(10);
 
         return view('files.index', compact('files'));
     }
@@ -53,22 +55,21 @@ class FileController extends Controller
         return redirect()->route('files.index');
     }
     
-    public function show(File $file)
+    public function show(File $file, Request $request)
     {
-        $file->load('user', 'file_name', 'folder');
-    
-        return view('files.show', compact('file'));
+        return view('files.show', compact('file'))
+               ->with('from', $request->input('from'));
     }    
 
-    public function destroy(File $file)
+    public function destroy(Request $request, File $file)
     {
-        // Opcional: eliminar el archivo físicamente del almacenamiento (si aplica)
-        Storage::delete('public/files/' . $file->name_original);
-
+        $folderId = $file->folder_id;
         $file->delete();
-
-        return redirect()->route('files.index')->with('success', 'Archivo eliminado exitosamente.');
-    }
+    
+        return $request->input('from') === 'explorer'
+            ? redirect()->route('folders.explorer', ['id' => $folderId])->with('success', 'Archivo eliminado correctamente')
+            : redirect()->route('files.index')->with('success', 'Archivo eliminado correctamente');
+    }    
 
     public function edit(File $file)
     {
@@ -78,6 +79,25 @@ class FileController extends Controller
         return view('files.edit', compact('file', 'fileNames', 'folders'));
     }
 
+    // public function update(Request $request, File $file)
+    // {
+    //     // 🔹 Validación correcta
+    //     $request->validate([
+    //         'file_name_id' => 'required|exists:file_names,id',
+    //         'type' => 'required|string|max:50',
+    //     ]);
+    
+    //     $file->update($request->all());
+    
+    //     // 🔄 Recargar la relación file_name para reflejar el cambio
+    //     $file->refresh();
+    //     $file->load('file_name');
+    
+    //     return $request->input('from') === 'explorer'
+    //         ? redirect()->route('folders.explorer', ['id' => $file->folder_id])->with('success', 'Archivo actualizado correctamente')
+    //         : redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente');
+    // }        
+    
     public function update(Request $request, File $file)
     {
         $request->validate([
@@ -85,12 +105,16 @@ class FileController extends Controller
             'folder_id' => 'required|exists:folders,id',
         ]);
 
-        $file->update([
-            'file_name_id' => $request->file_name_id,
-            'folder_id' => $request->folder_id,
-        ]);
+        // 🔄 Asignar valores manualmente
+        $file->file_name_id = $request->file_name_id;
+        $file->folder_id = $request->folder_id;
+        $file->save(); // Guardar cambios en la base de datos
 
-        return redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente.');
+        // 🔄 Refrescar el modelo para asegurarnos de que muestra los datos correctos
+        $file->refresh();
+
+        return redirect()->route('folders.explorer', ['id' => $file->folder_id])
+            ->with('success', 'Archivo actualizado correctamente.');
     }
 
 }

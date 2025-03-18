@@ -43,30 +43,32 @@
                         </div>
                     </div>
 
-                    <!-- ✅ Tabla para mostrar archivos -->
+                    <!-- ✅ Tabla para mostrar archivos SIN acciones -->
                     <div class="card mt-4">
                         <div class="card-body">
                             <h5>📄 Archivos</h5>
                             @if ($folder->files->isNotEmpty())
                                 <div class="table-responsive">
-                                    <table class="table table-bordered text-center">
+                                    <table class="table table-hover table-bordered text-center">
                                         <thead class="table-dark">
                                             <tr>
-                                                <th>#</th>
-                                                <th>Nombre del Archivo</th>
+                                                <th>ID</th>
+                                                <th>Nombre</th> <!-- Desde file_names -->
                                                 <th>Tipo</th>
-                                                <th>Subido por</th>
-                                                <th>Fecha de Creación</th>
+                                                <th>Usuario</th>
+                                                <th>Fecha Subida</th>
+                                                <th>Fecha Modificación</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($folder->files as $index => $file)
+                                            @foreach ($folder->files as $file)
                                                 <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>📄 {{ $file->name_original }}</td>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td><strong>{{ $file->file_name?->name ?? 'Sin nombre' }}</strong></td>
                                                     <td>{{ $file->type }}</td>
                                                     <td>{{ $file->user->name }}</td>
-                                                    <td>{{ $file->created_at }}</td>
+                                                    <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
+                                                    <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -75,7 +77,6 @@
                             @else
                                 <p class="text-muted">No hay archivos en esta carpeta.</p>
                             @endif
-
                         </div>
                     </div>
 
