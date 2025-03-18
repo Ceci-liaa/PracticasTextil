@@ -31,7 +31,7 @@
 
                     <div class="card">
                         <div class="pb-0 card-header">
-                            <h5 class="">Usuarios</h5>
+                            <!-- <h5 class="">Usuarios</h5> -->
                         </div>
 
                         <!-- 🔹 Hacemos la tabla 100% responsiva -->
