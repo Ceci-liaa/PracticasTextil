@@ -30,14 +30,15 @@
                         <a href="{{ route('folders.explorer') }}" class="btn btn-secondary mb-3">🏠 Volver a Inicio</a>
                     @endif
 
-                    <div class="card">
+                    <!-- 📁 Carpetas dentro de la carpeta actual -->
+                    <div class="card mb-4">
                         <div class="card-body">
                             <h5 class="mb-3">📁 Carpetas</h5>
                             <div class="row">
                                 @foreach ($subfolders as $subfolder)
                                     <div class="col-md-3">
                                         <div class="card text-center p-3 folder-card">
-                                            <a href="{{ route('folders.explorer', $subfolder->id) }}" class="text-decoration-none">
+                                            <a href="{{ route('folders.explorer', ['id' => $subfolder->id]) }}" class="text-decoration-none">
                                                 <i class="fas fa-folder fa-4x folder-icon"></i>
                                                 <p class="mt-2 folder-name">{{ $subfolder->name }}</p>
                                             </a>
@@ -47,6 +48,59 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- 📄 Archivos dentro de la carpeta actual (formato tabla) -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="mb-3">📄 Archivos</h5>
+
+                            @if ($files->isEmpty())
+                                <p class="text-center">📂 No hay archivos en esta carpeta.</p>
+                            @else
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-bordered text-center">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nombre Original</th>
+                                                <th>Tipo</th>
+                                                <th>Usuario</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($files as $file)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $file->name_original }}</td>
+                                                    <td>{{ $file->type }}</td>
+                                                    <td>{{ $file->user->name }}</td>
+                                                    <td>
+                                                        <a href="{{ route('files.show', $file) }}" class="btn btn-sm btn-info">Ver</a>
+                                                        <a href="{{ route('files.edit', $file) }}" class="btn btn-sm btn-warning">Editar</a>
+
+                                                        <!-- Botón de eliminar -->
+                                                        <button type="button" class="btn btn-sm btn-danger" 
+                                                            onclick="confirmDelete('{{ $file->id }}', '{{ $file->name_original }}')">
+                                                            🗑 Eliminar
+                                                        </button>
+
+                                                        <!-- Formulario oculto para eliminar -->
+                                                        <form id="delete-form-{{ $file->id }}" 
+                                                            action="{{ route('files.destroy', $file->id) }}" 
+                                                            method="POST" style="display: none;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,7 +108,7 @@
         <x-app.footer />
     </main>
 
-    <!-- Estilos personalizados -->
+    <!-- ✅ Estilos personalizados (manteniendo el diseño original de carpetas) -->
     <style>
         .breadcrumb-container {
             font-size: 11px;
@@ -96,5 +150,25 @@
             color: #795548; /* Marrón oscuro */
         }
     </style>
+
+    <!-- ✅ Script para eliminar archivos con confirmación -->
+    <script>
+        function confirmDelete(fileId, fileName) {
+            Swal.fire({
+                title: "¿Eliminar archivo?",
+                text: `¿Está seguro de que desea eliminar el archivo "${fileName}"? Esta acción no se puede deshacer.`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${fileId}`).submit();
+                }
+            });
+        }
+    </script>
 
 </x-app-layout>

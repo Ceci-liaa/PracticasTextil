@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Folder;
+use App\Models\File;
 
 class FolderController extends Controller
 {
@@ -141,17 +142,31 @@ class FolderController extends Controller
 
 
     // Explorar carpetas y archivos
-    public function explorer(Folder $folder = null)
+    // public function explorer(Folder $folder = null)
+    // {
+    //     if ($folder) {
+    //         $subfolders = Folder::where('parent_id', $folder->id)->get();
+    //         $files = collect(); // Agregamos esta línea para evitar el error
+    //     } else {
+    //         $subfolders = Folder::whereNull('parent_id')->get();
+    //         $files = collect();
+    //     }
+    
+    //     return view('folders.explorer', compact('folder', 'subfolders', 'files'));
+    // }
+
+    public function explorer($id = null)
     {
-        if ($folder) {
-            $subfolders = Folder::where('parent_id', $folder->id)->get();
-            $files = collect(); // Agregamos esta línea para evitar el error
-        } else {
-            $subfolders = Folder::whereNull('parent_id')->get();
-            $files = collect();
+        $folder = $id ? Folder::with('parent')->find($id) : null;
+    
+        if ($id && !$folder) {
+            return redirect()->route('folders.explorer')->with('error', 'Carpeta no encontrada.');
         }
     
-        return view('folders.explorer', compact('folder', 'subfolders', 'files'));
-    }
+        $subfolders = Folder::where('parent_id', $id)->get();
+        $files = File::where('folder_id', $id)->get(); // Obtiene archivos de la carpeta actual
     
+        return view('folders.explorer', compact('folder', 'subfolders', 'files'));
+    }    
+
 }

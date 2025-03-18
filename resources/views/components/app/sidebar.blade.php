@@ -36,7 +36,7 @@
                     <span class="nav-link-text ms-1">Dashboard</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link  {{ is_current_route('tables') ? 'active' : '' }}" href="{{ route('tables') }}">
                     <div
                         class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
@@ -64,7 +64,7 @@
                     </div>
                     <span class="nav-link-text ms-1">Tables</span>
                 </a>
-            </li>
+            </li> -->
             <!-- <li class="nav-item">
                 <a class="nav-link {{ is_current_route('wallet') ? 'active' : '' }} " href="{{ route('wallet') }}">
                     <div
@@ -142,6 +142,13 @@
                 <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('file_names.index') ? 'active' : '' }}"
                     href="{{ route('file_names.index') }}">
                     <span class="nav-link-text ms-1">Gestión Nombres Archivos</span>
+                </a>
+            </li>
+
+            <li class="nav-item border-start my-0 pt-2">
+                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('files.index') ? 'active' : '' }}"
+                    href="{{ route('files.index') }}">
+                    <span class="nav-link-text ms-1">Gestión Archivos</span>
                 </a>
             </li>
 
