@@ -37,23 +37,6 @@ class FolderController extends Controller
         return view('folders.create-folder', compact('folders'));
     }
 
-    // Guardar una carpeta Antiguo
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'parent_id' => 'nullable|exists:folders,id',
-    //     ]);
-
-    //     Folder::create([
-    //         'name' => $request->name,
-    //         'parent_id' => $request->parent_id,
-    //         'user_id' => auth()->id(),
-    //     ]);
-
-    //     return redirect()->route('folders.index')->with('success', 'Carpeta creada correctamente.');
-    // }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -76,7 +59,7 @@ class FolderController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('folders.index')->with('success', '✅ Carpeta creada correctamente.');
+        return redirect()->route('folders.index')->with('success', ' Carpeta creada correctamente.');
     }
 
 
@@ -87,57 +70,42 @@ class FolderController extends Controller
         return view('folders.edit-folder', compact('folder', 'folders'));
     }
     
-    // Actualizar una carpeta Antiguo
-    // public function update(Request $request, Folder $folder)
-    // {
-    //     $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'parent_id' => 'nullable|exists:folders,id',
-    //     ]);
-
-    //     $folder->update([
-    //         'name' => $request->name,
-    //         'parent_id' => $request->parent_id,
-    //     ]);
-
-    //     return redirect()->route('folders.index')->with('success', 'Carpeta actualizada correctamente.');
-    // }
-
     public function update(Request $request, Folder $folder)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'parent_id' => 'nullable|exists:folders,id',
         ]);
-    
-        // ❌ Evitar nombres duplicados dentro de la misma carpeta padre
+
+        // Evitar nombres duplicados dentro de la misma carpeta padre
         $exists = Folder::where('name', $request->name)
             ->where('parent_id', $request->parent_id)
-            ->where('id', '!=', $folder->id) // Excluir la misma carpeta en la comparación
+            ->where('id', '!=', $folder->id)
             ->exists();
-    
+
         if ($exists) {
-            return redirect()->back()->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación. Por favor, elija otro nombre.');
+            return redirect()->route('folders.index')->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación. Por favor, elija otro nombre.');
         }
-    
-        // ❌ No permitir que la carpeta se seleccione a sí misma como padre
+
+        // No permitir que la carpeta se seleccione a sí misma como padre
         if ($request->parent_id == $folder->id) {
-            return redirect()->back()->with('error', 'Una carpeta no puede ser su propio padre.');
+            return redirect()->route('folders.index')->with('error', 'Una carpeta no puede ser su propio padre.');
         }
-    
-        // ❌ No permitir que una carpeta padre se mueva dentro de una de sus subcarpetas
+
+        // No permitir que una carpeta padre se mueva dentro de una de sus subcarpetas
         if ($this->isMovingIntoChild($folder->id, $request->parent_id)) {
-            return redirect()->back()->with('error', 'No puedes mover una carpeta dentro de una de sus subcarpetas.');
+            return redirect()->route('folders.index')->with('error', 'No puedes mover una carpeta dentro de una de sus subcarpetas.');
         }
-    
+
+        // Actualizar carpeta
         $folder->update([
             'name' => $request->name,
             'parent_id' => $request->parent_id,
         ]);
-    
-        return redirect()->route('folders.index')->with('success', '✅ Carpeta actualizada correctamente.');
+
+        // ✅ Redirigir a la vista de gestión de carpetas con mensaje de éxito
+        return redirect()->route('folders.index')->with('success', ' Carpeta actualizada correctamente.');
     }
-    
 
     // Eliminar una carpeta
     public function destroy(Folder $folder)

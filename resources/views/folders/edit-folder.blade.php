@@ -8,31 +8,19 @@
                     <div class="alert alert-dark text-sm" role="alert">
                         <strong style="font-size: 24px;">Editar Carpeta</strong>
                     </div>
-                        <!-- 🔹 Mensajes de error y éxito
-                        @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
-                                {{ session('error') }}
-                            </div>
-                        @endif
 
-                        @if (session('success'))
-                            <div class="alert alert-success alert-dismissible fade show fade-message" role="alert">
-                                {{ session('success') }}
-                            </div>
-                        @endif -->
+                    <!-- ✅ Mensajes de error y éxito -->
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
-                        @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
-                                {{ session('error') }}
-                            </div>
-                        @endif
-
-                        @if (session('success'))
-                            <div class="alert alert-success alert-dismissible fade show fade-message" role="alert">
-                                {{ session('success') }}
-                            </div>
-                        @endif
-
+                    @if (session('success'))
+                        <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
                     <div class="card">
                         <div class="card-body">
@@ -50,7 +38,7 @@
                                         <select name="parent_id" class="form-control">
                                             <option value="">-- Sin Carpeta Padre --</option>
                                             @foreach ($folders as $parentFolder)
-                                                @if($parentFolder->id != $folder->id && !$folder->isChild($parentFolder->id)) <!-- Evita que se seleccione a sí misma o una subcarpeta -->
+                                                @if($parentFolder->id != $folder->id && !$folder->isChild($parentFolder->id))
                                                     <option value="{{ $parentFolder->id }}" 
                                                         @if($folder->parent_id == $parentFolder->id) selected @endif>
                                                         {{ $parentFolder->name }}
@@ -71,15 +59,17 @@
         <x-app.footer />
     </main>
 
+    <!-- ✅ Script para ocultar el mensaje después de 5 segundos -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             setTimeout(function () {
-                document.querySelectorAll('.fade-message').forEach(alert => {
-                    alert.style.transition = "opacity 0.5s";
-                    alert.style.opacity = 0;
-                    setTimeout(() => alert.remove(), 500);
-                });
-            }, 5000); // Desaparece después de 5 segundos
+                let successMessage = document.getElementById('success-message');
+                if (successMessage) {
+                    successMessage.style.transition = "opacity 0.5s";
+                    successMessage.style.opacity = 0;
+                    setTimeout(() => successMessage.remove(), 500);
+                }
+            }, 5000);
         });
     </script>
 

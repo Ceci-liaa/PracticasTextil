@@ -22,7 +22,7 @@
                         </div>
                     @endif -->
 
-                    🔹 Mensajes de error y éxito
+                    <!-- 🔹 Mensajes de error y éxito -->
                     @if (session('error'))
                         <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
                             {{ session('error') }}

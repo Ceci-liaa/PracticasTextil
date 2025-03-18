@@ -9,6 +9,13 @@
                         <strong style="font-size: 24px;">Gestión de Carpetas</strong>
                     </div>
 
+                    <!-- ✅ Mensaje de éxito solo cuando se actualiza una carpeta -->
+                    @if (session('success'))
+                        <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
                     <a href="{{ route('folders.create') }}" class="btn btn-success mb-3">Nueva Carpeta</a>
 
                     <div class="card">
@@ -65,7 +72,20 @@
 
         <x-app.footer />
     </main>
+
+    <!-- ✅ Script para ocultar el mensaje después de 5 segundos -->
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
+                let successMessage = document.getElementById('success-message');
+                if (successMessage) {
+                    successMessage.style.transition = "opacity 0.5s";
+                    successMessage.style.opacity = 0;
+                    setTimeout(() => successMessage.remove(), 500);
+                }
+            }, 5000);
+        });
+
         function confirmDelete(folderId, folderName) {
             Swal.fire({
                 title: "¿Eliminar carpeta?",
