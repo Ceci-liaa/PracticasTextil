@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\FolderController;
+use App\Http\Controllers\FileNameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,7 +103,6 @@ Route::get('/user/users-management', [UserController::class, 'index'])->name('us
 Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/user/{user}/update', [UserController::class, 'update'])->name('users.update');
 
-// redireccionar rutas
 Route::put('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
 //Folder routes
@@ -118,6 +118,17 @@ Route::delete('/folders/{folder}', [FolderController::class, 'destroy'])->name('
 // Ruta del explorador de archivos
 // Mostrar los archivos dentro de la carpeta seleccionada
 Route::get('/explorer/{folder?}', [FolderController::class, 'explorer'])->name('folders.explorer');
+
+// Ruta para los nombres de los archivos
+// Route::resource('file_names', FileNameController::class);   //Esto creará automáticamente las rutas para listar, crear, editar, actualizar y eliminar nombres de archivos.
+
+Route::get('/file_names', [FileNameController::class, 'index'])->name('file_names.index'); // Listar todos los nombres de archivo permitidos
+Route::get('/file_names/create', [FileNameController::class, 'create'])->name('file_names.create'); // Mostrar el formulario para crear un nuevo nombre de archivo
+Route::post('/file_names', [FileNameController::class, 'store'])->name('file_names.store'); // Guardar un nuevo nombre de archivo en la base de datos
+Route::get('/file_names/{fileName}/edit', [FileNameController::class, 'edit'])->name('file_names.edit'); // Mostrar el formulario para editar un nombre de archivo existente
+Route::put('/file_names/{fileName}', [FileNameController::class, 'update'])->name('file_names.update'); // Actualizar un nombre de archivo en la base de datos
+Route::delete('/file_names/{fileName}', [FileNameController::class, 'destroy'])->name('file_names.destroy'); // Eliminar un nombre de archivo
+
 
 
 
