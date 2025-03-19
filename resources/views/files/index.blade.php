@@ -45,12 +45,12 @@
                                                 <td>{{ $file->created_at->format('d/m/Y H:i') }}</td> <!-- Formato de fecha -->                                                 
                                                 <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td> <!-- Formato de fecha -->                                                 
                                                 <td>                                                  
-                                                    <a href="{{ route('files.show', ['file' => $file, 'from' => 'index']) }}" class="btn btn-sm btn-info">Ver</a>
-                                                    <a href="{{ route('files.edit', ['file' => $file, 'from' => 'index']) }}" class="btn btn-sm btn-warning">Editar</a>
+                                                    <a href="{{ route('files.show', ['file' => $file, 'from' => 'index']) }}" class="btn btn-sm btn-info"><i class="fa-solid fa-eye" style="font-size: 0.75rem;"></i> </a> <!-- Botón de ver -->
+                                                    <a href="{{ route('files.edit', ['file' => $file, 'from' => 'index']) }}" class="btn btn-sm btn-warning"> <i class="fa-solid fa-pen-to-square" style="font-size: 0.75rem;"></i> <!-- Icono de editar --> </a>
                                                     <!-- Botón de eliminar -->                                                     
                                                     <button type="button" class="btn btn-sm btn-danger" 
                                                         onclick="confirmDelete('{{ $file->id }}', '{{ $file->file_name?->name ?? 'Sin nombre' }}')">                                                         
-                                                        🗑 Eliminar                                                     
+                                                        <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> <!-- Icono de eliminar -->                                              
                                                     </button>                                                      
                                                     <!-- Formulario oculto para eliminar -->                                                     
                                                     <form id="delete-form-{{ $file->id }}" 

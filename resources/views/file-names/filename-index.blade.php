@@ -43,7 +43,7 @@
                                                 <td>{{ $fileName->name }}</td>
                                                 <td>{{ $fileName->updated_at->format('d/m/Y H:i:s') }}</td> <!-- 🔹 Fecha y hora de actualización -->
                                                 <td>
-                                                    <a href="{{ route('file_names.edit', $fileName->id) }}" class="btn btn-primary btn-sm">Editar</a>
+                                                    <a href="{{ route('file_names.edit', $fileName->id) }}" class="btn btn-sm btn-warning">Editar</a>
                                                     <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ $fileName->id }}', '{{ $fileName->name }}')">🗑 Eliminar</button>
 
                                                     <form id="delete-form-{{ $fileName->id }}" action="{{ route('file_names.destroy', $fileName->id) }}" method="POST" style="display: none;">

@@ -6,7 +6,7 @@
             <div class="mt-4 row">
                 <div class="col-12">
                     <!-- 🔹 TÍTULO SIEMPRE VISIBLE -->
-                    <div class="alert alert-dark text-sm" role="alert" style="margin-bottom: 1rem;">
+                    <div class="alert alert-dark text-sm " role="alert" style="margin-bottom: 1rem; width: 100%;">
                         <strong style="font-size: 24px;">Gestión de Usuarios</strong>
                     </div>
 
@@ -29,52 +29,52 @@
                         </div>
                     @endif
 
-                    <div class="card">
+                    <!-- 🔹 TABLA RESPONSIVA DEL MISMO ANCHO QUE EL TÍTULO -->
+                    <div class="card w-100"> <!-- Se usa w-100 para ocupar el mismo ancho del título -->
                         <div class="pb-0 card-header">
                             <!-- <h5 class="">Usuarios</h5> -->
                         </div>
 
-                        <!-- 🔹 Hacemos la tabla 100% responsiva -->
-                        <div class="table-responsive" style="overflow-x: auto;">
-                            <table class="table table-hover table-bordered text-center">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Email</th>
-                                        <th>Teléfono</th>
-                                        <th>Ubicación</th> <!-- Nueva columna -->
-                                        <th>Rol</th> <!-- Se mantiene el rol -->
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($users as $user)
+                        <div class="card-body p-3">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered text-center">
+                                    <thead class="table-dark">
                                         <tr>
-                                            <td>{{ $user->id }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->phone ?? 'N/A' }}</td>
-                                            <td>{{ $user->location ?? 'No especificada' }}</td> <!-- Nueva fila -->
-                                            <td>{{ $user->userRole->name ?? 'Sin Rol' }}</td><!-- Se obtiene el rol del usuario -->
-                                            <td>
-                                                <div class="p-1 text-white rounded" 
-                                                     style="background-color: {{ $user->status ? '#28a745' : '#dc3545' }};">
-                                                    {{ $user->status ? 'Activo' : 'Inactivo' }}
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('users.edit', $user) }}" class="btn btn-primary btn-sm">
-                                                    Editar
-                                                </a>
-                                            </td>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Teléfono</th>
+                                            <th>Ubicación</th>
+                                            <th>Rol</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div> <!-- Fin de la tabla responsiva -->
-                    </div>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($users as $user)
+                                            <tr>
+                                                <td>{{ $user->id }}</td>
+                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->email }}</td>
+                                                <td>{{ $user->phone ?? 'N/A' }}</td>
+                                                <td>{{ $user->location ?? 'No especificada' }}</td>
+                                                <td>{{ $user->userRole->name ?? 'Sin Rol' }}</td>
+                                                <td>
+                                                    <div class="p-1 text-white rounded"
+                                                         style="background-color: {{ $user->status ? '#28a745' : '#dc3545' }};">
+                                                        {{ $user->status ? 'Activo' : 'Inactivo' }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">Editar</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div> <!-- Fin de la tabla responsiva -->
+                        </div> <!-- Fin del card-body con padding -->
+                    </div> <!-- Fin del card con ancho ajustado -->
                 </div>
             </div>
         </div>

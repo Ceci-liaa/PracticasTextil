@@ -51,6 +51,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Noto+Sans:300,400,500,600,700,800|PT+Mono:300,400,500,600,700" rel="stylesheet" /> -->
 
+    <!-- Fonts and icons nuevo-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <title>
         Corporate UI by Creative Tim & UPDIVISION
@@ -111,7 +113,7 @@
     {{ $slot }}
 
     <div class="fixed-plugin">
-        <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
+        <!-- <a class="fixed-plugin-button text-dark position-fixed px-3 py-2"> -->
             <i class="fa fa-cog py-2" style="font-size: 50px;"></i> 
         </a>
         <div class="card shadow-lg ">

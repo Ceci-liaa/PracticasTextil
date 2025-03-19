@@ -47,7 +47,7 @@
                                                 <td>{{ $folder->created_at }}</td>
                                                 <td>{{ $folder->updated_at }}</td>
                                                 <td>
-                                                    <a href="{{ route('folders.edit', $folder) }}" class="btn btn-primary btn-sm">Editar</a>
+                                                    <a href="{{ route('folders.edit', $folder) }}" class="btn btn-sm btn-warning">Editar</a>
                                                     <!-- Botón de eliminar -->
                                                         <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ $folder->id }}', '{{ $folder->name }}')">
                                                             🗑 Eliminar

@@ -30,7 +30,7 @@
                         @else
                             <a href="{{ route('folders.explorer') }}" class="btn btn-secondary">🏠 Volver a Inicio</a>
                         @endif
-                        <a href="{{ route('files.create', ['folder_id' => $folder ? $folder->id : null, 'from' => 'explorer']) }}" class="btn btn-primary">📤 Subir Archivo</a>
+                        <a href="{{ route('files.create', ['folder_id' => $folder ? $folder->id : null, 'from' => 'explorer']) }}" class="btn btn-success mb-3">📤 Subir Archivo</a>
                     </div>
 
                     <!-- 📁 Carpetas dentro de la carpeta actual -->
