@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\File;
 use App\Models\FileName;
 use App\Models\Folder;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+
 
 
 class FileController extends Controller
@@ -21,14 +23,35 @@ class FileController extends Controller
         return view('files.index', compact('files'));
     }
 
-    public function create()
+    // public function create()
+    // {
+    //     $fileNames = FileName::all();
+    //     $folders = Folder::all();
+
+    //     return view('files.create', compact('fileNames', 'folders'));
+    // }
+    public function create(Request $request)
     {
+        $currentFolderId = $request->input('folder_id', null);
+        $currentFolder = Folder::find($currentFolderId);
+    
+        // Obtener subcarpetas de la carpeta actual
+        $folders = Folder::where('parent_id', $currentFolderId)->get();
         $fileNames = FileName::all();
-        $folders = Folder::all();
-
-        return view('files.create', compact('fileNames', 'folders'));
-    }
-
+    
+        // Asegurar que $breadcrumb sea una colección de Laravel
+        $breadcrumb = collect(); 
+        if ($currentFolder) {
+            $breadcrumb = collect($currentFolder->getAncestors())->map(function ($folder) {
+                return ['id' => $folder->id, 'name' => $folder->name];
+            });
+    
+            $breadcrumb->push(['id' => $currentFolder->id, 'name' => $currentFolder->name]);
+        }
+    
+        return view('files.create', compact('folders', 'fileNames', 'breadcrumb', 'currentFolderId'));
+    }    
+    
     public function store(Request $request)
 {
     $request->validate([
@@ -55,7 +78,6 @@ class FileController extends Controller
 
     return redirect()->route('files.index');
 }
-
     
     public function show(File $file, Request $request)
     {
@@ -79,45 +101,8 @@ class FileController extends Controller
         $folders = Folder::all();
 
         return view('files.edit', compact('file', 'fileNames', 'folders'));
-    }
-
-    // public function update(Request $request, File $file)
-    // {
-    //     // 🔹 Validación correcta
-    //     $request->validate([
-    //         'file_name_id' => 'required|exists:file_names,id',
-    //         'type' => 'required|string|max:50',
-    //     ]);
+    }      
     
-    //     $file->update($request->all());
-    
-    //     // 🔄 Recargar la relación file_name para reflejar el cambio
-    //     $file->refresh();
-    //     $file->load('file_name');
-    
-    //     return $request->input('from') === 'explorer'
-    //         ? redirect()->route('folders.explorer', ['id' => $file->folder_id])->with('success', 'Archivo actualizado correctamente')
-    //         : redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente');
-    // }        
-    
-    // public function update(Request $request, File $file)
-    // {
-    //     $request->validate([
-    //         'file_name_id' => 'required|exists:file_names,id',
-    //         'folder_id' => 'required|exists:folders,id',
-    //     ]);
-
-    //     // 🔄 Asignar valores manualmente
-    //     $file->file_name_id = $request->file_name_id;
-    //     $file->folder_id = $request->folder_id;
-    //     $file->save(); // Guardar cambios en la base de datos
-
-    //     // 🔄 Refrescar el modelo para asegurarnos de que muestra los datos correctos
-    //     $file->refresh();
-
-    //     return redirect()->route('folders.explorer', ['id' => $file->folder_id])
-    //         ->with('success', 'Archivo actualizado correctamente.');
-    // }
     public function update(Request $request, File $file)
     {
         // dd($request->all()); // Verificar los datos enviados
@@ -142,23 +127,6 @@ class FileController extends Controller
         return redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente.');
     }    
 
-    // public function download(File $file)
-    // {
-    //     // 🔹 Obtener el nombre predefinido con su extensión
-    //     $fileName = $file->file_name->name . '.' . $file->type;
-
-    //     // 🔹 Ruta donde se almacena el archivo
-    //     $filePath = storage_path('app/public/uploads/' . $file->name_original);
-
-    //     // 🔹 Verificar si el archivo existe antes de descargarlo
-    //     if (!file_exists($filePath)) {
-    //         return redirect()->back()->with('error', 'El archivo no existe.');
-    //     }
-
-    //     // 🔹 Descargar el archivo con el nombre predefinido
-    //     return response()->download($filePath, $fileName);
-    // }
-
 public function download(File $file)
 {
     // 🔹 Si el archivo está en la nube, redirigir a su URL
@@ -178,8 +146,6 @@ public function download(File $file)
     return response()->download($filePath, $file->file_name->name . '.' . $file->type);
 }
 
-
-
     // probar que datos no mas estan mostrandose en la vista
 //     public function download(File $file)
 // {
@@ -192,6 +158,4 @@ public function download(File $file)
 //         'file_exists' => file_exists(storage_path('app/public/files/' . $file->name_original)) ? 'Sí' : 'No'
 //     ]);
 // }
-
-    
 }

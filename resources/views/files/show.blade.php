@@ -16,7 +16,12 @@
                                 <li class="list-group-item"><strong>Nombre Original:</strong> {{ $file->name_original }}</li>
                                 <li class="list-group-item"><strong>Tipo:</strong> {{ $file->type }}</li>
                                 <li class="list-group-item"><strong>Nombre Predefinido:</strong> {{ $file->file_name->name }}</li>
-                                <li class="list-group-item"><strong>Carpeta:</strong> {{ $file->folder->name }}</li>
+                                
+                                {{-- Mostrar la ubicación en formato "Hola\Estudios\Textil" --}}
+                                <li class="list-group-item"><strong>Ubicación:</strong> 
+                                    {{ $file->folder ? implode('\\', $file->folder->getAncestors()->pluck('name')->toArray()) . '\\' . $file->folder->name : 'Raíz' }}
+                                </li>
+
                                 <li class="list-group-item"><strong>Subido por:</strong> {{ $file->user->name }}</li>
                                 <li class="list-group-item"><strong>Fecha de subida:</strong> {{ $file->created_at }}</li>
                                 <li class="list-group-item">
