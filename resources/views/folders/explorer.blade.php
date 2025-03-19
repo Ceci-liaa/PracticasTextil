@@ -80,9 +80,10 @@
                                                     <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
                                                     <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td>
                                                     <td>
-                                                    <a href="{{ route('files.show', $file) }}?from={{ request('from') }}" class="btn btn-sm btn-info">Ver</a>
-                                                    <a href="{{ route('files.edit', $file) }}?from={{ request('from') }}" class="btn btn-sm btn-warning">Editar</a>
-                                                        <!-- Botón de eliminar -->
+                                                    <a href="{{ route('files.show', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-info">Ver</a>
+                                                    <a href="{{ route('files.edit', ['file' => $file, 'from' => 'explorer']) }}" 
+                                                    class="btn btn-sm btn-warning">Editar</a>
+                                                    <!-- Botón de eliminar -->
                                                         <button type="button" class="btn btn-sm btn-danger" 
                                                             onclick="confirmDelete('{{ $file->id }}', '{{ $file->file_name?->name ?? 'Sin nombre' }}')">
                                                             🗑 Eliminar

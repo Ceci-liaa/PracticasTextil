@@ -20,8 +20,8 @@
                                 <li class="list-group-item"><strong>Subido por:</strong> {{ $file->user->name }}</li>
                                 <li class="list-group-item"><strong>Fecha de subida:</strong> {{ $file->created_at }}</li>
                             </ul>
-
-                                <a href="{{ request('from') === 'explorer' ? route('folders.explorer', $file->folder_id) : route('files.index') }}" class="btn btn-secondary">⬅ Volver</a>
+                                <a href="{{ request('from') === 'explorer' ? route('folders.explorer', $file->folder_id) : route('files.index') }}" 
+                                    class="btn btn-secondary">⬅ Volver</a>
                             </div>
                     </div>
                 </div>

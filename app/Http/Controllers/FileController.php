@@ -58,8 +58,8 @@ class FileController extends Controller
     public function show(File $file, Request $request)
     {
         return view('files.show', compact('file'))
-               ->with('from', $request->input('from'));
-    }    
+            ->with('from', $request->input('from'));
+    }
 
     public function destroy(Request $request, File $file)
     {
@@ -98,23 +98,46 @@ class FileController extends Controller
     //         : redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente');
     // }        
     
+    // public function update(Request $request, File $file)
+    // {
+    //     $request->validate([
+    //         'file_name_id' => 'required|exists:file_names,id',
+    //         'folder_id' => 'required|exists:folders,id',
+    //     ]);
+
+    //     // 🔄 Asignar valores manualmente
+    //     $file->file_name_id = $request->file_name_id;
+    //     $file->folder_id = $request->folder_id;
+    //     $file->save(); // Guardar cambios en la base de datos
+
+    //     // 🔄 Refrescar el modelo para asegurarnos de que muestra los datos correctos
+    //     $file->refresh();
+
+    //     return redirect()->route('folders.explorer', ['id' => $file->folder_id])
+    //         ->with('success', 'Archivo actualizado correctamente.');
+    // }
     public function update(Request $request, File $file)
     {
+        // dd($request->all()); // Verificar los datos enviados
+
         $request->validate([
             'file_name_id' => 'required|exists:file_names,id',
             'folder_id' => 'required|exists:folders,id',
         ]);
-
-        // 🔄 Asignar valores manualmente
+    
+        // 🔄 Actualizar los datos manualmente
         $file->file_name_id = $request->file_name_id;
         $file->folder_id = $request->folder_id;
-        $file->save(); // Guardar cambios en la base de datos
-
-        // 🔄 Refrescar el modelo para asegurarnos de que muestra los datos correctos
-        $file->refresh();
-
-        return redirect()->route('folders.explorer', ['id' => $file->folder_id])
-            ->with('success', 'Archivo actualizado correctamente.');
-    }
+        $file->save();
+    
+        // 🔹 Verificar si el parámetro "from" fue enviado y redirigir correctamente
+        if ($request->has('from') && $request->input('from') === 'explorer') {
+            return redirect()->route('folders.explorer', ['id' => $file->folder_id])
+                             ->with('success', 'Archivo actualizado correctamente.');
+        }
+    
+        // 🔹 Si "from" no se envió correctamente, por defecto, se queda en Gestión de Archivos
+        return redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente.');
+    }    
 
 }
