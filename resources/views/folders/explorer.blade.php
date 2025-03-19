@@ -23,12 +23,15 @@
                         </span>
                     </div>
 
-                    <!-- Botón para volver atrás -->
-                    @if ($folder && $folder->parent_id)
-                        <a href="{{ route('folders.explorer', $folder->parent_id) }}" class="btn btn-secondary mb-3">⬅ Volver</a>
-                    @else
-                        <a href="{{ route('folders.explorer') }}" class="btn btn-secondary mb-3">🏠 Volver a Inicio</a>
-                    @endif
+                    <!-- Botón para volver atrás y subir archivo -->
+                    <div class="d-flex justify-content-between mb-3">
+                        @if ($folder && $folder->parent_id)
+                            <a href="{{ route('folders.explorer', $folder->parent_id) }}" class="btn btn-secondary">⬅ Volver</a>
+                        @else
+                            <a href="{{ route('folders.explorer') }}" class="btn btn-secondary">🏠 Volver a Inicio</a>
+                        @endif
+                        <a href="{{ route('files.create', ['folder_id' => $folder ? $folder->id : null, 'from' => 'explorer']) }}" class="btn btn-primary">📤 Subir Archivo</a>
+                    </div>
 
                     <!-- 📁 Carpetas dentro de la carpeta actual -->
                     <div class="card mb-4">
@@ -62,7 +65,7 @@
                                         <thead class="table-dark">
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Nombre</th> <!-- Ahora muestra el nombre desde file_names -->
+                                                <th>Nombre</th>
                                                 <th>Tipo</th>
                                                 <th>Usuario</th>
                                                 <th>Fecha Subida</th>
@@ -80,21 +83,17 @@
                                                     <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
                                                     <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td>
                                                     <td>
-                                                    <a href="{{ route('files.show', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-info">Ver</a>
-                                                    <a href="{{ route('files.edit', ['file' => $file, 'from' => 'explorer']) }}" 
-                                                    class="btn btn-sm btn-warning">Editar</a>
-                                                    <!-- Botón de eliminar -->
+                                                        <a href="{{ route('files.show', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-info">Ver</a>
+                                                        <a href="{{ route('files.edit', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-warning">Editar</a>
                                                         <button type="button" class="btn btn-sm btn-danger" 
                                                             onclick="confirmDelete('{{ $file->id }}', '{{ $file->file_name?->name ?? 'Sin nombre' }}')">
                                                             🗑 Eliminar
                                                         </button>
-
-                                                        <!-- Formulario oculto para eliminar -->
                                                         <form id="delete-form-{{ $file->id }}" 
                                                             action="{{ route('files.destroy', $file->id) }}" method="POST">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <input type="hidden" name="from" value="{{ request('from') }}"> <!-- Mantiene la ubicación -->
+                                                            <input type="hidden" name="from" value="explorer">
                                                         </form>
                                                     </td>
                                                 </tr>
@@ -160,7 +159,7 @@
         function confirmDelete(fileId, fileName) {
             Swal.fire({
                 title: "¿Eliminar archivo?",
-                text: `¿Está seguro de que desea eliminar el archivo "${fileName}"? Esta acción no se puede deshacer.`,
+                text: ¿Está seguro de que desea eliminar el archivo "${fileName}"? Esta acción no se puede deshacer.,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
@@ -169,10 +168,9 @@
                 cancelButtonText: "Cancelar"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById(`delete-form-${fileId}`).submit();
+                    document.getElementById(delete-form-${fileId}).submit();
                 }
             });
         }
     </script>
-
 </x-app-layout>

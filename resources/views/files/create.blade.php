@@ -33,6 +33,8 @@
 
                             <form action="{{ route('files.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                <!-- 🔹 Input oculto para indicar desde dónde se sube el archivo -->
+                                <input type="hidden" name="from" value="{{ request('from') }}">
 
                                 {{-- Input: Nombre Predefinido --}}
                                 <div class="mb-3 form-group">
@@ -52,7 +54,7 @@
                                     <ul class="folder-list">
                                         @foreach ($folders as $folder)
                                             <li class="folder-item">
-                                                <a href="{{ route('files.create', ['folder_id' => $folder->id]) }}"
+                                                <a href="{{ route('files.create', ['folder_id' => $folder->id, 'from' => request('from')]) }}"
                                                 class="folder-link">
                                                     📁 {{ $folder->name }}
                                                 </a>
@@ -72,7 +74,6 @@
                                     <button type="submit" class="btn btn-success">Subir Archivo</button>
                                     <a href="{{ route('files.index') }}" class="btn btn-secondary">Cancelar</a>
                                 </div>
-
                             </form>
                         </div>
                     </div>

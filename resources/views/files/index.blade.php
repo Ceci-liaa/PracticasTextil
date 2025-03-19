@@ -16,7 +16,7 @@
                         </div>                     
                     @endif                      
 
-                    <a href="{{ route('files.create') }}" class="btn btn-success mb-3">Subir nuevo archivo</a> <!-- Verde -->                      
+                    <a href="{{ route('files.create', ['from' => 'index']) }}" class="btn btn-success mb-3">Subir nuevo archivo</a>
 
                     <div class="card">                         
                         <div class="card-body">                             
@@ -27,6 +27,7 @@
                                             <th>ID</th>                                             
                                             <th>Nombre</th> <!-- Toma el valor desde la tabla file_names -->                                             
                                             <th>Tipo</th>                                             
+                                            <th>Ubicación</th> <!-- Nueva columna -->                                             
                                             <th>Usuario</th>                                             
                                             <th>Fecha Subida</th>                                             
                                             <th>Fecha Modificación</th>                                             
@@ -39,14 +40,14 @@
                                                 <td>{{ $loop->iteration }}</td>                                                 
                                                 <td><strong>{{ $file->file_name?->name ?? 'Sin nombre' }}</strong></td>                                                 
                                                 <td>{{ $file->type }}</td>                                                 
+                                                <td><strong>{{ $file->full_path }}</strong></td>                                                
                                                 <td>{{ $file->user->name }}</td>                                                 
                                                 <td>{{ $file->created_at->format('d/m/Y H:i') }}</td> <!-- Formato de fecha -->                                                 
                                                 <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td> <!-- Formato de fecha -->                                                 
-                                                <td>              
-                                                <a href="{{ route('files.show', ['file' => $file, 'from' => 'index']) }}" class="btn btn-sm btn-info">Ver</a>
-                                                <a href="{{ route('files.edit', ['file' => $file, 'from' => 'index']) }}" 
-                                                class="btn btn-sm btn-warning">Editar</a>
-                                                <!-- Botón de eliminar -->                                                     
+                                                <td>                                                  
+                                                    <a href="{{ route('files.show', ['file' => $file, 'from' => 'index']) }}" class="btn btn-sm btn-info">Ver</a>
+                                                    <a href="{{ route('files.edit', ['file' => $file, 'from' => 'index']) }}" class="btn btn-sm btn-warning">Editar</a>
+                                                    <!-- Botón de eliminar -->                                                     
                                                     <button type="button" class="btn btn-sm btn-danger" 
                                                         onclick="confirmDelete('{{ $file->id }}', '{{ $file->file_name?->name ?? 'Sin nombre' }}')">                                                         
                                                         🗑 Eliminar                                                     

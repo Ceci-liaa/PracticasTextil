@@ -29,10 +29,25 @@ class File extends Model
     {
         return $this->belongsTo(Folder::class, 'folder_id');
     }
-
+    
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getFullPathAttribute()
+    {
+        $folder = $this->folder;
+        $path = [];
+    
+        while ($folder) {
+            array_unshift($path, $folder->name); // Agregar al inicio del array
+            $folder = $folder->parent;
+        }
+    
+        // Si el archivo está en una carpeta padre, mostrar solo su nombre
+        return count($path) === 1 ? $path[0] : implode('\\', $path);
+    }
+       
 
 }
