@@ -169,6 +169,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/files/{file}/edit', [FileController::class, 'edit'])->name('files.edit');
     Route::put('/files/{file}', [FileController::class, 'update'])->name('files.update');
     Route::delete('/files/{file}', [FileController::class, 'destroy'])->name('files.destroy');
+    Route::get('/files/download/{file}', [FileController::class, 'download'])->name('files.download');
+
 });
 
 

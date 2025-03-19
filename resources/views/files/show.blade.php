@@ -19,10 +19,17 @@
                                 <li class="list-group-item"><strong>Carpeta:</strong> {{ $file->folder->name }}</li>
                                 <li class="list-group-item"><strong>Subido por:</strong> {{ $file->user->name }}</li>
                                 <li class="list-group-item"><strong>Fecha de subida:</strong> {{ $file->created_at }}</li>
+                                <li class="list-group-item">
+                                    <strong>Descargar Archivo:</strong> 
+                                    <a href="{{ route('files.download', $file->id) }}" class="text-decoration-none text-primary">
+                                        📥 Descargar {{ $file->file_name->name }}.{{ $file->type }}
+                                    </a>
+                                </li>
                             </ul>
-                                <a href="{{ request('from') === 'explorer' ? route('folders.explorer', $file->folder_id) : route('files.index') }}" 
-                                    class="btn btn-secondary">⬅ Volver</a>
-                            </div>
+
+                            <a href="{{ request('from') === 'explorer' ? route('folders.explorer', $file->folder_id) : route('files.index') }}" 
+                               class="btn btn-secondary">⬅ Volver</a>
+                        </div>
                     </div>
                 </div>
             </div>

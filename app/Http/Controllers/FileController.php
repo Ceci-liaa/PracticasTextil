@@ -30,30 +30,32 @@ class FileController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'uploaded_file' => 'required|file|max:5120', // max 5MB por ejemplo
-            'file_name_id' => 'required|exists:file_names,id',
-            'folder_id' => 'required|exists:folders,id',
-        ]);
+{
+    $request->validate([
+        'uploaded_file' => 'required|file|max:5120', // max 5MB
+        'file_name_id' => 'required|exists:file_names,id',
+        'folder_id' => 'required|exists:folders,id',
+    ]);
+
+    $uploadedFile = $request->file('uploaded_file');
+    $originalName = $uploadedFile->getClientOriginalName();
+    $extension = $uploadedFile->getClientOriginalExtension();
     
-        $uploadedFile = $request->file('uploaded_file');
-        $originalName = $uploadedFile->getClientOriginalName();
-        $extension = $uploadedFile->getClientOriginalExtension();
-    
-        // Aquí decides dónde almacenar físicamente tu archivo
-        $uploadedFile->store('public/files');
-    
-        File::create([
-            'file_name_id' => $request->file_name_id,
-            'name_original' => $originalName,
-            'type' => strtoupper($extension),
-            'folder_id' => $request->folder_id,
-            'user_id' => auth()->id(),
-        ]);
-    
-        return redirect()->route('files.index');
-    }
+    // 🔹 Guardar el archivo con su nombre original en `storage/app/public/files/`
+    $filePath = $uploadedFile->storeAs('public/files', $originalName);
+
+    // 🔹 Guardar en la base de datos
+    File::create([
+        'file_name_id' => $request->file_name_id,
+        'name_original' => $originalName,
+        'type' => strtoupper($extension),
+        'folder_id' => $request->folder_id,
+        'user_id' => auth()->id(),
+    ]);
+
+    return redirect()->route('files.index');
+}
+
     
     public function show(File $file, Request $request)
     {
@@ -140,4 +142,56 @@ class FileController extends Controller
         return redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente.');
     }    
 
+    // public function download(File $file)
+    // {
+    //     // 🔹 Obtener el nombre predefinido con su extensión
+    //     $fileName = $file->file_name->name . '.' . $file->type;
+
+    //     // 🔹 Ruta donde se almacena el archivo
+    //     $filePath = storage_path('app/public/uploads/' . $file->name_original);
+
+    //     // 🔹 Verificar si el archivo existe antes de descargarlo
+    //     if (!file_exists($filePath)) {
+    //         return redirect()->back()->with('error', 'El archivo no existe.');
+    //     }
+
+    //     // 🔹 Descargar el archivo con el nombre predefinido
+    //     return response()->download($filePath, $fileName);
+    // }
+
+public function download(File $file)
+{
+    // 🔹 Si el archivo está en la nube, redirigir a su URL
+    if ($file->storage_url) {
+        return redirect($file->storage_url);
+    }
+
+    // 🔹 Buscar el archivo en `storage/app/public/files/`
+    $filePath = storage_path('app/public/files/' . $file->name_original);
+
+    // 🔹 Verificar si el archivo existe en la ruta correcta
+    if (!file_exists($filePath)) {
+        return redirect()->back()->with('error', 'El archivo no existe en el servidor.');
+    }
+
+    // 🔹 Descargar el archivo con el nombre predefinido y su extensión correcta
+    return response()->download($filePath, $file->file_name->name . '.' . $file->type);
+}
+
+
+
+    // probar que datos no mas estan mostrandose en la vista
+//     public function download(File $file)
+// {
+//     dd([
+//         'file_id' => $file->id,
+//         'file_name_original' => $file->name_original,
+//         'file_name_predefined' => $file->file_name->name,
+//         'file_type' => $file->type,
+//         'file_path' => storage_path('app/public/files/' . $file->name_original),
+//         'file_exists' => file_exists(storage_path('app/public/files/' . $file->name_original)) ? 'Sí' : 'No'
+//     ]);
+// }
+
+    
 }
