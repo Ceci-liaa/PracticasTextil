@@ -26,7 +26,7 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Nombre</th>
-                                            <th>Carpeta Padre</th>
+                                            <th>Ubicación</th>
                                             <th>Creado por</th>
                                             <th>Fecha Creación</th>
                                             <th>Fecha Modificación</th>
@@ -42,9 +42,7 @@
                                                         📁 {{ $folder->name }}
                                                     </a>
                                                 </td>
-                                                <td>
-                                                    {{ $folder->parent ? $folder->parent->name : 'Raíz' }}
-                                                </td>
+                                                <td><strong>{{ $folder->full_path }}</strong></td> <!-- Nueva columna: ruta completa -->
                                                 <td>{{ $folder->user->name }}</td>
                                                 <td>{{ $folder->created_at }}</td>
                                                 <td>{{ $folder->updated_at }}</td>

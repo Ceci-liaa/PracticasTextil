@@ -96,5 +96,18 @@ class Folder extends Model
         return false;
     }
 
+    public function getFullPathAttribute()
+    {
+        $folder = $this;
+        $path = [];
+
+        while ($folder) {
+            array_unshift($path, $folder->name); // Agrega el nombre al inicio del array
+            $folder = $folder->parent; // Mueve al padre
+        }
+
+        return implode('\\', $path); // Concatena la ruta con "\"
+    }
+
 }
 
