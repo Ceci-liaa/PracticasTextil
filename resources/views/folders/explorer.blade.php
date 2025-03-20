@@ -83,11 +83,11 @@
                                                     <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
                                                     <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td>
                                                     <td>
-                                                        <a href="{{ route('files.show', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-info">Ver</a>
-                                                        <a href="{{ route('files.edit', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-warning">Editar</a>
+                                                        <a href="{{ route('files.show', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-info"><i class="fa-solid fa-eye" style="font-size: 0.75rem;"></i> </a>
+                                                        <a href="{{ route('files.edit', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-warning"> <i class="fa-solid fa-pen-to-square" style="font-size: 0.75rem;"></i> <!-- Icono de editar --> </a>
                                                         <button type="button" class="btn btn-sm btn-danger" 
                                                             onclick="confirmDelete('{{ $file->id }}', '{{ $file->file_name?->name ?? 'Sin nombre' }}')">
-                                                            🗑 Eliminar
+                                                            <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> <!-- Icono de eliminar -->  
                                                         </button>
                                                         <form id="delete-form-{{ $file->id }}" 
                                                             action="{{ route('files.destroy', $file->id) }}" method="POST">

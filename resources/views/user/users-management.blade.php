@@ -66,7 +66,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">Editar</a>
+                                                    <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning"> <i class="fa-solid fa-pen-to-square" style="font-size: 0.75rem;"></i> <!-- Icono de editar --> </a>
                                                 </td>
                                             </tr>
                                         @endforeach
