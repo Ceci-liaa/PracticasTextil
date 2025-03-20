@@ -156,21 +156,21 @@
 
     <!-- ✅ Script para eliminar archivos con confirmación -->
     <script>
-        function confirmDelete(fileId, fileName) {
-            Swal.fire({
-                title: "¿Eliminar archivo?",
-                text: ¿Está seguro de que desea eliminar el archivo "${fileName}"? Esta acción no se puede deshacer.,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Sí, eliminar",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(delete-form-${fileId}).submit();
-                }
-            });
-        }
-    </script>
+    function confirmDelete(fileId, fileName) {
+        Swal.fire({
+            title: "¿Eliminar archivo?",
+            text: `¿Está seguro de que desea eliminar el archivo "${fileName}"? Esta acción no se puede deshacer.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`delete-form-${fileId}`).submit();
+            }
+        });
+    }
+</script>
 </x-app-layout>
