@@ -99,12 +99,31 @@ class FileController extends Controller
             : redirect()->route('files.index')->with('success', 'Archivo eliminado correctamente');
     }    
 
-    public function edit(File $file)
+    public function edit(File $file, Request $request)
     {
         $fileNames = FileName::all();
-        $folders = Folder::all();
-
-        return view('files.edit', compact('file', 'fileNames', 'folders'));
+        
+        // Obtener todas las carpetas (tanto padres como hijas)
+        $allFolders = Folder::with('parent')->get();
+    
+        // Obtener las carpetas principales (padres sin parent_id)
+        $parentFolders = Folder::whereNull('parent_id')->get();
+    
+        // Obtener la carpeta actual del archivo
+        $currentFolderId = $request->input('folder_id', $file->folder_id);
+        $currentFolder = Folder::find($currentFolderId);
+    
+        // Construcción del breadcrumb de navegación
+        $breadcrumb = collect();
+        if ($currentFolder) {
+            $breadcrumb = collect($currentFolder->getAncestors())->map(function ($folder) {
+                return ['id' => $folder->id, 'name' => $folder->name];
+            });
+    
+            $breadcrumb->push(['id' => $currentFolder->id, 'name' => $currentFolder->name]);
+        }
+    
+        return view('files.edit', compact('file', 'fileNames', 'allFolders', 'parentFolders', 'breadcrumb', 'currentFolderId'));
     }      
     
     public function update(Request $request, File $file)

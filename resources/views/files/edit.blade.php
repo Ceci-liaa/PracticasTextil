@@ -11,15 +11,27 @@
 
                     <div class="card">
                         <div class="card-body">
+                            {{-- Mostrar la ruta de navegación --}}
+                            <nav>
+                                <ol class="breadcrumb p-2" id="breadcrumb" style="background-color: #ffffff; border-radius: 8px;">
+                                    <li class="breadcrumb-item">
+                                        <a href="#" onclick="navigateTo(null)" style="color: #0288d1; font-weight: bold; text-decoration: none;">
+                                            🏠 Inicio
+                                        </a>
+                                    </li>
+                                </ol>
+                            </nav>
+
                             <form action="{{ route('files.update', $file) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-
-                                <!-- 🔹 Pasar "from" correctamente -->
+                                
                                 <input type="hidden" name="from" value="{{ request('from', 'index') }}">
+                                <input type="hidden" name="folder_id" id="selected-folder" value="{{ $file->folder_id }}">
 
-                                <div class="mb-3">
-                                    <label class="form-label">Nombre Predefinido:</label>
+                                {{-- Input: Nombre Predefinido --}}
+                                <div class="mb-3 form-group">
+                                    <label class="form-label">Nombre predefinido:</label>
                                     <select name="file_name_id" class="form-select" required>
                                         @foreach ($fileNames as $fileName)
                                             <option value="{{ $fileName->id }}" {{ $file->file_name_id == $fileName->id ? 'selected' : '' }}>
@@ -29,19 +41,31 @@
                                     </select>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Carpeta:</label>
-                                    <select name="folder_id" class="form-select" required>
-                                        @foreach ($folders as $folder)
-                                            <option value="{{ $folder->id }}" {{ $file->folder_id == $folder->id ? 'selected' : '' }}>
-                                                {{ $folder->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                {{-- Ubicación Actual --}}
+                                <div class="mb-3 form-group">
+                                    <label class="form-label">Ubicación Actual:</label>
+                                    <div class="alert alert-info" id="current-location">{{ $file->folder ? $file->folder->full_path : '🏠 Inicio' }}</div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Actualizar Archivo</button>
-                                <a href="{{ url()->previous() }}" class="btn btn-secondary">Cancelar</a>
+                                {{-- Nueva Ubicación --}}
+                                <div class="mb-3 form-group">
+                                    <label class="form-label">Nueva Ubicación:</label>
+                                    <ul class="folder-list" id="folder-container">
+                                        @foreach ($parentFolders as $folder)
+                                            <li class="folder-item">
+                                                <a href="#" onclick="navigateTo('{{ $folder->id }}')" class="folder-link">
+                                                    📁 {{ $folder->name }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+
+                                {{-- Botones --}}
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-primary">Actualizar Archivo</button>
+                                    <a href="{{ route('files.index') }}" class="btn btn-secondary">Cancelar</a>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -52,3 +76,49 @@
         <x-app.footer />
     </main>
 </x-app-layout>
+
+<script>
+    function navigateTo(folderId) {
+        document.getElementById('selected-folder').value = folderId || '';
+        updateBreadcrumb(folderId);
+        updateFolderList(folderId);
+    }
+
+    function updateBreadcrumb(folderId) {
+        let breadcrumb = document.getElementById('breadcrumb');
+        breadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateTo(null)" style="color: #0288d1; font-weight: bold; text-decoration: none;">🏠 Inicio</a></li>';
+        
+        let currentFolder = folderId ? folders.find(f => f.id == folderId) : null;
+        let path = [];
+        
+        while (currentFolder) {
+            path.unshift(`<li class="breadcrumb-item"><a href="#" onclick="navigateTo('${currentFolder.id}')" style="color: #0288d1; font-weight: bold; text-decoration: none;">${currentFolder.name}</a></li>`);
+            currentFolder = folders.find(f => f.id == currentFolder.parent_id);
+        }
+        
+        breadcrumb.innerHTML += path.join('');
+    }
+
+    function updateFolderList(folderId) {
+        let folderContainer = document.getElementById('folder-container');
+        folderContainer.innerHTML = '';
+        
+        let subfolders = folders.filter(f => f.parent_id == folderId);
+        subfolders.forEach(folder => {
+            folderContainer.innerHTML += `<li class="folder-item"><a href="#" onclick="navigateTo('${folder.id}')" class="folder-link">📁 ${folder.name}</a></li>`;
+        });
+    }
+    
+    let folders = @json($allFolders);
+</script>
+
+<style>
+    .form-group { margin-bottom: 15px; }
+    .form-label { font-weight: bold; font-size: 14px; }
+    .form-control, .form-select { border-radius: 8px; padding: 10px; font-size: 14px; }
+    .folder-list { list-style: none; padding: 0; }
+    .folder-item { background-color: #ffffff; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 5px; font-size: 13px; display: flex; align-items: center; transition: 0.3s; }
+    .folder-item:hover { background-color: #e1f5fe; border-left: 5px solid #0288d1; }
+    .folder-link { color: #000; text-decoration: none; font-weight: bold; }
+    .folder-link:hover { color: #0288d1; }
+</style>
