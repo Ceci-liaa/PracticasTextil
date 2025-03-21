@@ -45,6 +45,43 @@ class FileController extends Controller
         return view('files.create', compact('folders', 'fileNames', 'breadcrumb', 'currentFolderId'));
     }    
     
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'uploaded_file' => 'required|file|max:5120', // max 5MB
+    //         'file_name_id' => 'required|exists:file_names,id',
+    //         'folder_id' => 'nullable|exists:folders,id', // Puede ser null si es desde gestión
+    //     ]);
+    
+    //     $uploadedFile = $request->file('uploaded_file');
+    //     $originalName = $uploadedFile->getClientOriginalName();
+    //     $extension = $uploadedFile->getClientOriginalExtension();
+        
+    //     // 🔹 Guardar el archivo con su nombre original en `storage/app/public/files/`
+    //     $filePath = $uploadedFile->storeAs('public/files', $originalName);
+    
+    //     // 🔹 Guardar en la base de datos
+    //     $file = File::create([
+    //         'file_name_id' => $request->file_name_id,
+    //         'name_original' => $originalName,
+    //         'type' => strtoupper($extension),
+    //         'folder_id' => $request->folder_id, // Puede ser null si es desde gestión
+    //         'user_id' => auth()->id(),
+    //     ]);
+    
+    //     // 🔹 Verificar si la subida fue desde el Explorador o desde la Gestión de Archivos
+    //     if ($request->has('from')) {
+    //         if ($request->input('from') === 'explorer') {
+    //             return redirect()->route('folders.explorer', ['id' => $request->folder_id])
+    //                              ->with('success', 'Archivo subido correctamente.');
+    //         } elseif ($request->input('from') === 'index') {
+    //             return redirect()->route('files.index')->with('success', 'Archivo subido correctamente.');
+    //         }
+    //     }
+    
+    //     // 🔹 Si no se especifica "from", por defecto se queda en la Gestión de Archivos
+    //     return redirect()->route('files.index')->with('success', 'Archivo subido correctamente.');
+    // }   
     public function store(Request $request)
     {
         $request->validate([
@@ -70,18 +107,19 @@ class FileController extends Controller
         ]);
     
         // 🔹 Verificar si la subida fue desde el Explorador o desde la Gestión de Archivos
-        if ($request->has('from')) {
-            if ($request->input('from') === 'explorer') {
-                return redirect()->route('folders.explorer', ['id' => $request->folder_id])
-                                 ->with('success', 'Archivo subido correctamente.');
-            } elseif ($request->input('from') === 'index') {
-                return redirect()->route('files.index')->with('success', 'Archivo subido correctamente.');
-            }
+        $from = $request->input('from');
+    
+        if ($from === 'explorer') {
+            return redirect()
+                ->route('folders.explorer', ['id' => $request->folder_id])
+                ->with('success', 'Archivo subido correctamente desde el Explorador.');
         }
     
-        // 🔹 Si no se especifica "from", por defecto se queda en la Gestión de Archivos
-        return redirect()->route('files.index')->with('success', 'Archivo subido correctamente.');
-    }         
+        // 🔹 Si no se especifica "from" o es diferente, redirigir a la gestión de archivos
+        return redirect()
+            ->route('files.index')
+            ->with('success', 'Archivo subido correctamente.');
+    }          
     
     public function show(File $file, Request $request)
     {

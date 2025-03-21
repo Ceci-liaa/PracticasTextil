@@ -5,6 +5,18 @@
         <div class="px-5 py-4 container-fluid">
             <div class="row">
                 <div class="col-12">
+                        @if (session('success'))
+                            <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
                     <div class="alert alert-dark text-sm d-flex align-items-center justify-content-between" role="alert">
                         <strong style="font-size: 24px;">📂 Explorador de Archivos</strong>
 

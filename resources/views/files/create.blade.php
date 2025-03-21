@@ -72,7 +72,9 @@
                                 {{-- Botones --}}
                                 <div class="d-flex justify-content-between">
                                     <button type="submit" class="btn btn-success">Subir Archivo</button>
-                                    <a href="{{ route('files.index') }}" class="btn btn-secondary">Cancelar</a>
+                                        <a href="{{ request('from') === 'explorer' 
+                                        ? route('folders.explorer', ['id' => $currentFolderId]) 
+                                        : route('files.index') }}" class="btn btn-secondary">Cancelar</a>
                                 </div>
                             </form>
                         </div>
