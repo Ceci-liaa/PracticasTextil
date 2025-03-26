@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\User; 
 
 
 class LoginController extends Controller
@@ -27,27 +28,36 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+
     public function store(Request $request)
     {
+            // Validación de los campos del formulario
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
         $credentials = $request->only('email', 'password');
-
         $rememberMe = $request->rememberMe ? true : false;
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'El usuario no existe',
+            ])->withInput($request->only('email'));
+        }
 
         if (Auth::attempt($credentials, $rememberMe)) {
             $request->session()->regenerate();
-
             return redirect()->intended('/dashboard');
         }
 
-
-
         return back()->withErrors([
-            'message' => 'The provided credentials do not match our records.',
+            'password' => 'Credenciales incorrectas',
         ])->withInput($request->only('email'));
     }
-
-
 
     /**
      * Remove the specified resource from storage.

@@ -20,19 +20,17 @@
                                     <p class="mb-0">Email: <b>admin@corporateui.com</b></p>
                                     <p class="mb-0">Contraseña: <b>secret</b></p>
                                 </div>
-                                <div class="text-center">
-                                    @if (session('status'))
-                                        <div class="mb-4 font-medium text-sm text-green-600">
-                                            {{ session('status') }}
-                                        </div>
-                                    @endif
-                                    @error('message')
-                                        <div class="alert alert-danger text-sm" role="alert">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
+
                                 <div class="card-body">
+                                    <div class="text-center">
+                                        @if ($errors->any())
+                                        <div class="alert alert-danger px-3 py-2 text-sm rounded" style="max-width: 400px;">
+                                            @foreach ($errors->all() as $error)
+                                                <div>{{ $error }}</div>
+                                            @endforeach
+                                        </div>
+                                        @endif
+                                    </div>
                                     <form role="form" class="text-start" method="POST" action="sign-in">
                                         @csrf
                                         <label>Correo</label>
