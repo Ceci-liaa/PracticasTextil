@@ -281,7 +281,7 @@ class FolderController extends Controller
         $term = strtolower($request->input('term'));
         $results = [];
     
-        // Buscar carpetas
+        // Aceptar cualquier combinación: letras, números y símbolos
         $folderMatches = Folder::whereRaw('LOWER(name) LIKE ?', ["%{$term}%"])
             ->limit(5)
             ->get();
@@ -294,9 +294,10 @@ class FolderController extends Controller
             ];
         }
     
-        // Buscar archivos
         $fileMatches = File::with('file_name')
-            ->whereHas('file_name', fn($q) => $q->whereRaw('LOWER(name) LIKE ?', ["%{$term}%"]))
+            ->whereHas('file_name', fn($q) =>
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$term}%"])
+            )
             ->limit(5)
             ->get();
     
@@ -308,7 +309,6 @@ class FolderController extends Controller
             ];
         }
     
-        // Si no hay resultados, mostrar mensaje personalizado
         if (empty($results)) {
             $results[] = [
                 'label' => '❌ Carpeta o archivo no encontrado',
@@ -318,6 +318,5 @@ class FolderController extends Controller
         }
     
         return response()->json($results);
-    }
-    
+    }    
 }
