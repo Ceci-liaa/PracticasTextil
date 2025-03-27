@@ -149,6 +149,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/folders/subfolders', [FolderController::class, 'getSubfolders']);
     Route::get('/folders/{folder}/children', function ($folderId) {$parentId = $folderId == 0 ? null : $folderId;
     return \App\Models\Folder::where('parent_id', $parentId)->select('id', 'name')->get();});
+    Route::get('/explorer/suggestions', [FolderController::class, 'searchSuggestions'])->name('folders.suggestions');
+
     
 
     // Explorador de carpetas

@@ -197,22 +197,56 @@ class FolderController extends Controller
     //     return view('folders.explorer', compact('folder', 'subfolders', 'files'));
     // }
 
-    public function explorer($id = null)
-    {
-        $folder = $id ? Folder::with(['parent'])->find($id) : null;
+    // Modificado el 27/3/2025 para poner el buscador de archivos
+    // public function explorer($id = null)
+    // {
+    //     $folder = $id ? Folder::with(['parent'])->find($id) : null;
 
+    //     if ($id && !$folder) {
+    //         return redirect()->route('folders.explorer')->with('error', 'Carpeta no encontrada.');
+    //     }
+
+    //     $subfolders = Folder::where('parent_id', $id)->get();
+
+    //     // 🔄 Agregar "file_name" y "user" para asegurarnos de que los cambios se reflejan
+    //     $files = File::with(['file_name', 'user'])->where('folder_id', $id)->latest()->get();
+
+    //     return view('folders.explorer', compact('folder', 'subfolders', 'files'));
+    // }
+
+    public function explorer(Request $request, $id = null)
+    {
+        $search = $request->input('search');
+        $folder = $id ? Folder::with('parent')->find($id) : null;
+    
         if ($id && !$folder) {
             return redirect()->route('folders.explorer')->with('error', 'Carpeta no encontrada.');
         }
-
-        $subfolders = Folder::where('parent_id', $id)->get();
-
-        // 🔄 Agregar "file_name" y "user" para asegurarnos de que los cambios se reflejan
-        $files = File::with(['file_name', 'user'])->where('folder_id', $id)->latest()->get();
-
+    
+        $folderIds = [$id];
+        if ($search && $id !== null) {
+            $folderIds = array_merge($folderIds, $this->getAllDescendantFolderIds($id));
+        }
+    
+        // Subcarpetas inmediatas
+        $querySubfolders = Folder::where('parent_id', $id);
+    
+        // Si hay búsqueda, mostrar carpetas y archivos que coincidan
+        if ($search) {
+            $querySubfolders = Folder::where('name', 'like', '%' . $search . '%');
+    
+            $queryFiles = File::with(['file_name', 'user'])
+                ->whereHas('file_name', fn ($q) => $q->where('name', 'like', '%' . $search . '%'));
+        } else {
+            $queryFiles = File::with(['file_name', 'user'])->where('folder_id', $id);
+        }
+    
+        $subfolders = $querySubfolders->get();
+        $files = $queryFiles->latest()->get();
+    
         return view('folders.explorer', compact('folder', 'subfolders', 'files'));
     }
-
+    
     public function getSubfolders(Request $request)
     {
         $parentId = $request->input('parent_id');
@@ -227,7 +261,46 @@ class FolderController extends Controller
     
         return response()->json($filtered);
     }
+
+// Función para obtener IDs de todas las subcarpetas recursivamente
+    private function getAllDescendantFolderIds($parentId)
+    {
+        $ids = Folder::where('parent_id', $parentId)->pluck('id')->toArray();
+        foreach ($ids as $childId) {
+            $ids = array_merge($ids, $this->getAllDescendantFolderIds($childId));
+        }
+        return $ids;
+    }
+
+    // Función para obtener sugerencias de búsqueda
+    public function searchSuggestions(Request $request)
+    {
+        $term = $request->input('term');
+        $results = [];
     
+        // Carpetas
+        $folderMatches = Folder::where('name', 'like', "%$term%")->limit(5)->get();
+        foreach ($folderMatches as $folder) {
+            $results[] = [
+                'label' => '📁 ' . $folder->name,
+                'value' => $folder->name,
+                'url' => route('folders.explorer', $folder->id)
+            ];
+        }
     
+        // Archivos
+        $fileMatches = File::with('file_name')->whereHas('file_name', fn($q) => $q->where('name', 'like', "%$term%"))
+            ->limit(5)->get();
+    
+        foreach ($fileMatches as $file) {
+            $results[] = [
+                'label' => '📄 ' . ($file->file_name->name ?? 'Sin nombre'),
+                'value' => $file->file_name->name,
+                'url' => route('files.show', ['file' => $file->id, 'from' => 'explorer'])
+            ];
+        }
+    
+        return response()->json($results);
+    }    
 
 }

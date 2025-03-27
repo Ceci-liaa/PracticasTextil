@@ -37,12 +37,23 @@
 
                     <!-- Botón para volver atrás y subir archivo -->
                     <div class="d-flex justify-content-between mb-3">
-                        @if ($folder && $folder->parent_id)
-                            <a href="{{ route('folders.explorer', $folder->parent_id) }}" class="btn btn-secondary">⬅ Volver</a>
-                        @else
-                            <a href="{{ route('folders.explorer') }}" class="btn btn-secondary">🏠 Volver a Inicio</a>
-                        @endif
-                        <a href="{{ route('files.create', ['folder_id' => $folder ? $folder->id : null, 'from' => 'explorer']) }}" class="btn btn-success mb-3">📤 Subir Archivo</a>
+                        <div>
+                            @if ($folder && $folder->parent_id)
+                                <a href="{{ route('folders.explorer', $folder->parent_id) }}" class="btn btn-secondary">⬅ Volver</a>
+                            @else
+                                <a href="{{ route('folders.explorer') }}" class="btn btn-secondary">🏠 Volver a Inicio</a>
+                            @endif
+                        </div>
+                            <!-- Buscador centrado -->
+                            <form method="GET" action="{{ route('folders.explorer', $folder ? $folder->id : null) }}" class="flex-grow-1 mx-2" style="max-width: 500px;">
+                                <div class="input-group">
+                                    <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Buscar archivos o carpetas...">
+                                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Buscar</button>
+                                </div>
+                            </form>
+                        <div>
+                            <a href="{{ route('files.create', ['folder_id' => $folder ? $folder->id : null, 'from' => 'explorer']) }}" class="btn btn-success mb-3">📤 Subir Archivo</a>
+                        </div>
                     </div>
 
                     <!-- 📁 Carpetas dentro de la carpeta actual -->
@@ -185,4 +196,30 @@
         });
     }
 </script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<script>
+$(function() {
+    $('input[name="search"]').autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "{{ route('folders.suggestions') }}",
+                data: { term: request.term },
+                success: function(data) {
+                    response(data);
+                }
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            window.location.href = ui.item.url;
+        }
+    });
+});
+</script>
+
+
 </x-app-layout>
