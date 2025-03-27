@@ -44,11 +44,13 @@
                                 <a href="{{ route('folders.explorer') }}" class="btn btn-secondary">🏠 Volver a Inicio</a>
                             @endif
                         </div>
-                            <!-- Buscador centrado -->
                             <form method="GET" action="{{ route('folders.explorer', $folder ? $folder->id : null) }}" class="flex-grow-1 mx-2" style="max-width: 500px;">
-                                <div class="input-group">
-                                    <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Buscar archivos o carpetas...">
-                                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Buscar</button>
+                                <div class="modern-search">
+                                    <span class="search-icon"><i class="fas fa-search"></i></span>
+                                    <input type="text" name="search" value="{{ request('search') }}" class="modern-input" placeholder="Buscar archivos o carpetas...">
+                                    @if(request('search'))
+                                        <a href="{{ route('folders.explorer', $folder ? $folder->id : null) }}" class="clear-btn"><i class="fas fa-times"></i></a>
+                                    @endif
                                 </div>
                             </form>
                         <div>
@@ -176,6 +178,81 @@
             color: #795548;
         }
     </style>
+
+<style>
+.modern-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 2rem;
+    background-color: #fff;
+    padding: 0.5rem 1rem;
+    height: 48px;
+    transition: all 0.3s ease;
+}
+
+.modern-search:focus-within {
+    box-shadow: 0 0 0 2px #007bff40;
+    border-color: #007bff;
+}
+
+.modern-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding-left: 1.5rem;
+    font-size: 1rem;
+    background-color: transparent;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    color: #999;
+}
+
+.clear-btn {
+    color: #999;
+    text-decoration: none;
+    font-size: 1.2rem;
+    margin-left: 0.5rem;
+}
+
+.clear-btn:hover {
+    color: #333;
+}
+</style>
+
+<style>
+/* Borde redondeado del cuadro de sugerencias */
+.ui-autocomplete {
+    border-radius: 12px !important;
+    border: 1px solid #ccc;
+    background-color: white;
+    z-index: 9999 !important;
+    padding: 0;
+    overflow: hidden; /* 👈 Evita bordes cuadrados al hacer hover */
+}
+
+/* Ítems del menú */
+.ui-menu-item-wrapper {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    color: #333; /* texto normal */
+}
+
+/* Al pasar el mouse: fondo celeste, texto negro y mantiene borde redondeado */
+.ui-menu-item-wrapper:hover,
+.ui-state-active {
+    background-color:rgb(158, 232, 255) !important;
+    color: #000 !important;
+    border-radius: 0 !important; /* Evita esquinas cuadradas individuales */
+}
+</style>
+
+
 
     <!-- ✅ Script para eliminar archivos con confirmación -->
     <script>

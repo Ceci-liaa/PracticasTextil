@@ -233,10 +233,13 @@ class FolderController extends Controller
     
         // Si hay búsqueda, mostrar carpetas y archivos que coincidan
         if ($search) {
-            $querySubfolders = Folder::where('name', 'like', '%' . $search . '%');
+            $querySubfolders = Folder::whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']);
     
             $queryFiles = File::with(['file_name', 'user'])
-                ->whereHas('file_name', fn ($q) => $q->where('name', 'like', '%' . $search . '%'));
+            ->whereHas('file_name', function ($q) use ($search) {
+                $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        
         } else {
             $queryFiles = File::with(['file_name', 'user'])->where('folder_id', $id);
         }
@@ -275,11 +278,14 @@ class FolderController extends Controller
     // Función para obtener sugerencias de búsqueda
     public function searchSuggestions(Request $request)
     {
-        $term = $request->input('term');
+        $term = strtolower($request->input('term'));
         $results = [];
     
-        // Carpetas
-        $folderMatches = Folder::where('name', 'like', "%$term%")->limit(5)->get();
+        // Buscar carpetas
+        $folderMatches = Folder::whereRaw('LOWER(name) LIKE ?', ["%{$term}%"])
+            ->limit(5)
+            ->get();
+    
         foreach ($folderMatches as $folder) {
             $results[] = [
                 'label' => '📁 ' . $folder->name,
@@ -288,9 +294,11 @@ class FolderController extends Controller
             ];
         }
     
-        // Archivos
-        $fileMatches = File::with('file_name')->whereHas('file_name', fn($q) => $q->where('name', 'like', "%$term%"))
-            ->limit(5)->get();
+        // Buscar archivos
+        $fileMatches = File::with('file_name')
+            ->whereHas('file_name', fn($q) => $q->whereRaw('LOWER(name) LIKE ?', ["%{$term}%"]))
+            ->limit(5)
+            ->get();
     
         foreach ($fileMatches as $file) {
             $results[] = [
@@ -300,7 +308,16 @@ class FolderController extends Controller
             ];
         }
     
+        // Si no hay resultados, mostrar mensaje personalizado
+        if (empty($results)) {
+            $results[] = [
+                'label' => '❌ Carpeta o archivo no encontrado',
+                'value' => '',
+                'url' => null
+            ];
+        }
+    
         return response()->json($results);
-    }    
-
+    }
+    
 }
