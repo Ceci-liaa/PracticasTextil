@@ -25,7 +25,7 @@
                             <form action="{{ route('files.update', $file) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                
+
                                 <input type="hidden" name="from" value="{{ request('from', 'index') }}">
                                 <input type="hidden" name="folder_id" id="selected-folder" value="{{ $file->folder_id }}">
 
@@ -64,7 +64,15 @@
                                 {{-- Botones --}}
                                 <div class="d-flex justify-content-between">
                                     <button type="submit" class="btn btn-primary">Actualizar Archivo</button>
-                                    <a href="{{ route('files.index') }}" class="btn btn-secondary">Cancelar</a>
+
+                                    @php
+                                        $from = request('from', 'index');
+                                        $cancelUrl = $from === 'explorer'
+                                            ? route('folders.explorer', ['id' => $file->folder_id])
+                                            : route('files.index');
+                                    @endphp
+
+                                    <a href="{{ $cancelUrl }}" class="btn btn-secondary">Cancelar</a>
                                 </div>
                             </form>
                         </div>
@@ -87,28 +95,28 @@
     function updateBreadcrumb(folderId) {
         let breadcrumb = document.getElementById('breadcrumb');
         breadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateTo(null)" style="color: #0288d1; font-weight: bold; text-decoration: none;">🏠 Inicio</a></li>';
-        
+
         let currentFolder = folderId ? folders.find(f => f.id == folderId) : null;
         let path = [];
-        
+
         while (currentFolder) {
             path.unshift(`<li class="breadcrumb-item"><a href="#" onclick="navigateTo('${currentFolder.id}')" style="color: #0288d1; font-weight: bold; text-decoration: none;">${currentFolder.name}</a></li>`);
             currentFolder = folders.find(f => f.id == currentFolder.parent_id);
         }
-        
+
         breadcrumb.innerHTML += path.join('');
     }
 
     function updateFolderList(folderId) {
         let folderContainer = document.getElementById('folder-container');
         folderContainer.innerHTML = '';
-        
+
         let subfolders = folders.filter(f => f.parent_id == folderId);
         subfolders.forEach(folder => {
             folderContainer.innerHTML += `<li class="folder-item"><a href="#" onclick="navigateTo('${folder.id}')" class="folder-link">📁 ${folder.name}</a></li>`;
         });
     }
-    
+
     let folders = @json($allFolders);
 </script>
 
