@@ -109,5 +109,11 @@ class Folder extends Model
         return implode('\\', $path); // Concatena la ruta con "\"
     }
 
+    // Relación recursiva profunda para todos los subniveles
+    // public function subfoldersRecursive()
+    // {
+    //     return $this->hasMany(Folder::class, 'parent_id')->with('subfoldersRecursive');
+    // }
+
 }
 

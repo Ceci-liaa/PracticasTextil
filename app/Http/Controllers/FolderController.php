@@ -9,15 +9,6 @@ use App\Models\File;
 class FolderController extends Controller
 {
 
-    // Mostrar carpetas y subcarpetas
-
-    // antiguo
-    // public function index()
-    // {
-    //     $folders = Folder::with('parent', 'user')->get();
-    //     return view('folders.folders-management', compact('folders'));
-    // }
-    
     // Muestras todas las carpetas que existen
     public function index()
     {
@@ -35,11 +26,18 @@ class FolderController extends Controller
     }    
     
     // Crear una carpeta
+    // public function create()
+    // {
+    //     $folders = Folder::all(); // Obtener todas las carpetas para seleccionar una como padre
+    //     return view('folders.create-folder', compact('folders'));
+    // }
+
     public function create()
     {
-        $folders = Folder::all(); // Obtener todas las carpetas para seleccionar una como padre
-        return view('folders.create-folder', compact('folders'));
+        $folders = Folder::whereNull('parent_id')->get();
+        return view('folders.create-folder', compact('folders'));        
     }
+
 
     public function store(Request $request)
     {
