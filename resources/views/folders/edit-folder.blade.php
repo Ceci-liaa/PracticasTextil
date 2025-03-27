@@ -9,6 +9,9 @@
                         <strong style="font-size: 24px;">Editar Carpeta</strong>
                     </div>
 
+                    <div class="card">
+
+                    
                     <!-- ✅ Mensajes de error y éxito -->
                     @if (session('error'))
                         <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
@@ -21,8 +24,7 @@
                             {{ session('success') }}
                         </div>
                     @endif
-
-                    <div class="card">
+                    
                         <div class="card-body">
                             <form action="{{ route('folders.update', $folder->id) }}" method="POST">
                                 @csrf
@@ -34,21 +36,31 @@
                                         <input type="text" name="name" class="form-control" value="{{ $folder->name }}" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Carpeta Padre (Opcional)</label>
-                                        <select name="parent_id" class="form-control">
-                                            <option value="">-- Sin Carpeta Padre --</option>
-                                            @foreach ($folders as $parentFolder)
-                                                @if($parentFolder->id != $folder->id && !$folder->isChild($parentFolder->id))
-                                                    <option value="{{ $parentFolder->id }}" 
-                                                        @if($folder->parent_id == $parentFolder->id) selected @endif>
-                                                        {{ $parentFolder->name }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
+                                        <label>Nueva ubicación </label>
+                                        <div class="border rounded p-2" style="max-height: 300px; overflow-y: auto;">
+                                            <input type="hidden" name="parent_id" id="parent_id" value="{{ $folder->parent_id }}">
+                                            <div><strong>Ruta actual:</strong> {{ $folder->getFullPathAttribute() }}</div>
+                                            <div><strong>Nueva ubicación:</strong> <span id="breadcrumb">Inicio</span></div>
+                                            <ul id="folder-list" class="list-unstyled mt-2">
+                                                <li>
+                                                    <div onclick="selectAsRoot()" class="folder-item py-1 text-success" style="cursor: pointer;">
+                                                        📁 / (Carpeta raíz)
+                                                    </div>
+                                                </li>
+                                                @foreach ($folders as $f)
+                                                    @if ($f->id !== $folder->id && !$folder->hasDescendant($f->id))
+                                                        <li>
+                                                            <div onclick="navigateToFolder({{ $f->id }}, '{{ $f->name }}')" class="folder-item py-1" style="cursor: pointer;">
+                                                                📁 {{ $f->name }}
+                                                            </div>
+                                                        </li>
+                                                    @endif
+                                                @endforeach
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
 
+                                </div>
                                 <button type="submit" class="btn btn-primary mt-4">Actualizar Carpeta</button>
                             </form>
                         </div>
@@ -72,5 +84,136 @@
             }, 5000);
         });
     </script>
+
+<script>
+let breadcrumbStack = [];
+const folderBeingEdited = {{ $folder->id }};
+
+function navigateToFolder(folderId, folderName) {
+    breadcrumbStack.push({ id: folderId, name: folderName });
+    updateBreadcrumb();
+    loadSubfolders(folderId);
+    document.getElementById('parent_id').value = folderId;
+}
+
+function selectAsRoot() {
+    breadcrumbStack = [];
+    updateBreadcrumb();
+    document.getElementById('parent_id').value = '';
+    loadRootFolders();
+}
+
+function updateBreadcrumb() {
+    const breadcrumb = document.getElementById('breadcrumb');
+    breadcrumb.innerHTML = '';
+
+    const rootSpan = document.createElement('span');
+    rootSpan.textContent = 'Inicio';
+    rootSpan.style.cursor = 'pointer';
+    rootSpan.onclick = () => selectAsRoot();
+    breadcrumb.appendChild(rootSpan);
+
+    breadcrumbStack.forEach((item, index) => {
+        breadcrumb.appendChild(document.createTextNode(' / '));
+        const span = document.createElement('span');
+        span.textContent = item.name;
+        span.onclick = () => goBackTo(index);
+        breadcrumb.appendChild(span);
+    });
+}
+
+function goBackTo(index) {
+    const target = breadcrumbStack[index];
+    breadcrumbStack = breadcrumbStack.slice(0, index + 1);
+    updateBreadcrumb();
+    loadSubfolders(target.id);
+    document.getElementById('parent_id').value = target.id;
+}
+
+function loadSubfolders(parentId) {
+    fetch(`/folders/subfolders?parent_id=${parentId}&current_folder_id=${folderBeingEdited}`)
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById('folder-list');
+            list.innerHTML = '';
+
+            const rootItem = document.createElement('li');
+            rootItem.innerHTML = `<div onclick=\"selectAsRoot()\" class=\"folder-item py-1 text-success\" style=\"cursor: pointer;\">📁 / (Carpeta raíz)</div>`;
+            list.appendChild(rootItem);
+
+            data.forEach(f => {
+                const li = document.createElement('li');
+                li.innerHTML = `<div onclick=\"navigateToFolder(${f.id}, '${f.name.replace(/'/g, "\\'")}')\" class=\"folder-item py-1\" style=\"cursor: pointer;\">📁 ${f.name}</div>`;
+                list.appendChild(li);
+            });
+        });
+}
+
+function loadRootFolders() {
+    fetch(`/folders/subfolders?parent_id=&current_folder_id=${folderBeingEdited}`)
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById('folder-list');
+            list.innerHTML = '';
+
+            const rootItem = document.createElement('li');
+            rootItem.innerHTML = `<div onclick=\"selectAsRoot()\" class=\"folder-item py-1 text-success\" style=\"cursor: pointer;\">📁 / (Carpeta raíz)</div>`;
+            list.appendChild(rootItem);
+
+            data.forEach(f => {
+                const li = document.createElement('li');
+                li.innerHTML = `<div onclick=\"navigateToFolder(${f.id}, '${f.name.replace(/'/g, "\\'")}')\" class=\"folder-item py-1\" style=\"cursor: pointer;\">📁 ${f.name}</div>`;
+                list.appendChild(li);
+            });
+        });
+}
+</script>
+
+{{-- Estilos Personalizados --}}
+<style>
+    .form-group { margin-bottom: 15px; }
+    .form-label { font-weight: bold; font-size: 14px; }
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+    }
+    .folder-item {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 13px;
+        font-weight: bold;
+        color: #000;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        text-align: left;
+        transition: all 0.3s ease-in-out;
+        margin-bottom: 5px;
+    }
+    .folder-item:hover {
+        background-color: #e1f5fe;
+        border-left: 5px solid #0288d1;
+        color: #0288d1;
+    }
+    .folder-item.active {
+        background-color: #cceeff;
+        border-left: 5px solid #0288d1;
+        color: #000;
+    }
+    #breadcrumb span {
+        font-weight: bold;
+        color: #007bff;
+        cursor: pointer;
+        margin-right: 4px;
+    }
+    #breadcrumb span:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+</style>
+
 
 </x-app-layout>

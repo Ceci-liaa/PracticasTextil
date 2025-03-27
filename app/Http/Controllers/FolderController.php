@@ -64,50 +64,84 @@ class FolderController extends Controller
         return redirect()->route('folders.index')->with('success', ' Carpeta creada correctamente.');
     }
 
-
     // Editar una carpeta
-    public function edit(Folder $folder)
+    // public function edit(Folder $folder)
+    // {
+    //     $folders = Folder::all(); // Para seleccionar una nueva carpeta padre si es necesario
+    //     return view('folders.edit-folder', compact('folder', 'folders'));
+    // }
+
+    public function edit($id)
     {
-        $folders = Folder::all(); // Para seleccionar una nueva carpeta padre si es necesario
+        $folder = Folder::findOrFail($id);
+        $folders = Folder::whereNull('parent_id')->get();
         return view('folders.edit-folder', compact('folder', 'folders'));
     }
-    
+
+    // public function update(Request $request, Folder $folder)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'parent_id' => 'nullable|exists:folders,id',
+    //     ]);
+
+    //     // Evitar nombres duplicados dentro de la misma carpeta padre
+    //     $exists = Folder::where('name', $request->name)
+    //         ->where('parent_id', $request->parent_id)
+    //         ->where('id', '!=', $folder->id)
+    //         ->exists();
+
+    //     if ($exists) {
+    //         return redirect()->route('folders.index')->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación. Por favor, elija otro nombre.');
+    //     }
+
+    //     // No permitir que la carpeta se seleccione a sí misma como padre
+    //     if ($request->parent_id == $folder->id) {
+    //         return redirect()->route('folders.index')->with('error', 'Una carpeta no puede ser su propio padre.');
+    //     }
+
+    //     // No permitir que una carpeta padre se mueva dentro de una de sus subcarpetas
+    //     if ($this->isMovingIntoChild($folder->id, $request->parent_id)) {
+    //         return redirect()->route('folders.index')->with('error', 'No puedes mover una carpeta dentro de una de sus subcarpetas.');
+    //     }
+
+    //     // Actualizar carpeta
+    //     $folder->update([
+    //         'name' => $request->name,
+    //         'parent_id' => $request->parent_id,
+    //     ]);
+
+    //     // ✅ Redirigir a la vista de gestión de carpetas con mensaje de éxito
+    //     return redirect()->route('folders.index')->with('success', ' Carpeta actualizada correctamente.');
+    // }
     public function update(Request $request, Folder $folder)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:folders,id',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'parent_id' => 'nullable|exists:folders,id',
+    ]);
 
-        // Evitar nombres duplicados dentro de la misma carpeta padre
-        $exists = Folder::where('name', $request->name)
-            ->where('parent_id', $request->parent_id)
-            ->where('id', '!=', $folder->id)
-            ->exists();
+    // Evitar nombres duplicados dentro de la misma carpeta padre
+    $exists = Folder::where('name', $request->name)
+        ->where('parent_id', $request->parent_id)
+        ->where('id', '!=', $folder->id)
+        ->exists();
 
-        if ($exists) {
-            return redirect()->route('folders.index')->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación. Por favor, elija otro nombre.');
-        }
-
-        // No permitir que la carpeta se seleccione a sí misma como padre
-        if ($request->parent_id == $folder->id) {
-            return redirect()->route('folders.index')->with('error', 'Una carpeta no puede ser su propio padre.');
-        }
-
-        // No permitir que una carpeta padre se mueva dentro de una de sus subcarpetas
-        if ($this->isMovingIntoChild($folder->id, $request->parent_id)) {
-            return redirect()->route('folders.index')->with('error', 'No puedes mover una carpeta dentro de una de sus subcarpetas.');
-        }
-
-        // Actualizar carpeta
-        $folder->update([
-            'name' => $request->name,
-            'parent_id' => $request->parent_id,
-        ]);
-
-        // ✅ Redirigir a la vista de gestión de carpetas con mensaje de éxito
-        return redirect()->route('folders.index')->with('success', ' Carpeta actualizada correctamente.');
+    if ($exists) {
+        return redirect()->back()->withInput()->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación.');
     }
+
+    if ($folder->id == $request->parent_id || $this->isMovingIntoChild($folder->id, $request->parent_id)) {
+        return redirect()->route('folders.index')->with('error', 'No puedes mover una carpeta dentro de una de sus subcarpetas.');
+    }
+
+    $folder->update([
+        'name' => $request->name,
+        'parent_id' => $request->parent_id,
+    ]);
+
+    return redirect()->route('folders.index')->with('success', ' Carpeta actualizada correctamente.');
+}
 
     // Eliminar una carpeta
     public function destroy(Folder $folder)
@@ -123,22 +157,29 @@ class FolderController extends Controller
     /**
      * Función que verifica si una carpeta intenta moverse dentro de una de sus subcarpetas
     */
+    // private function isMovingIntoChild($folderId, $newParentId)
+    // {
+    //     if (!$newParentId) {
+    //         return false; // Si no hay un nuevo padre, no hay problema
+    //     }
+
+    //     $parent = Folder::find($newParentId);
+
+    //     while ($parent) {
+    //         if ($parent->id == $folderId) {
+    //             return true; // Se encontró la carpeta padre en la jerarquía de subcarpetas
+    //         }
+    //         $parent = $parent->parent;
+    //     }
+
+    //     return false;
+    // }
     private function isMovingIntoChild($folderId, $newParentId)
     {
-        if (!$newParentId) {
-            return false; // Si no hay un nuevo padre, no hay problema
-        }
-
-        $parent = Folder::find($newParentId);
-
-        while ($parent) {
-            if ($parent->id == $folderId) {
-                return true; // Se encontró la carpeta padre en la jerarquía de subcarpetas
-            }
-            $parent = $parent->parent;
-        }
-
-        return false;
+        if (!$newParentId) return false;
+        if ($folderId == $newParentId) return true;
+        $folder = Folder::with('subfoldersRecursive')->find($folderId);
+        return $folder->hasDescendant($newParentId);
     }
 
 
@@ -171,5 +212,22 @@ class FolderController extends Controller
 
         return view('folders.explorer', compact('folder', 'subfolders', 'files'));
     }
+
+    public function getSubfolders(Request $request)
+    {
+        $parentId = $request->input('parent_id');
+        $currentFolderId = $request->input('current_folder_id');
+        $folder = Folder::with('subfoldersRecursive')->find($currentFolderId);
+    
+        $subfolders = Folder::where('parent_id', $parentId)->get();
+    
+        $filtered = $subfolders->reject(function ($f) use ($folder) {
+            return $folder->id === $f->id || $folder->hasDescendant($f->id);
+        })->values();
+    
+        return response()->json($filtered);
+    }
+    
+    
 
 }

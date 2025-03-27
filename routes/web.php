@@ -146,8 +146,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/folders/{folder}/edit', [FolderController::class, 'edit'])->name('folders.edit');
     Route::put('/folders/{folder}', [FolderController::class, 'update'])->name('folders.update');
     Route::delete('/folders/{folder}', [FolderController::class, 'destroy'])->name('folders.destroy');
-    // Route::get('/folders/{folder}/children', function (\App\Models\Folder $folder) {return $folder->subfolders()->select('id', 'name')->get();});
-// Soporta carpeta raíz con ID 0
+    Route::get('/folders/subfolders', [FolderController::class, 'getSubfolders']);
     Route::get('/folders/{folder}/children', function ($folderId) {$parentId = $folderId == 0 ? null : $folderId;
     return \App\Models\Folder::where('parent_id', $parentId)->select('id', 'name')->get();});
     
