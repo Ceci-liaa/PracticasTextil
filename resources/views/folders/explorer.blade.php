@@ -61,33 +61,49 @@
                     <!-- 📁 Carpetas dentro de la carpeta actual -->
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h5 class="mb-3">📁 Carpetas</h5>
-                            <div class="row">
-                                @foreach ($subfolders as $subfolder)
-                                    <div class="col-md-3">
-                                        <div class="card text-center p-3 folder-card">
-                                            <a href="{{ route('folders.explorer', ['id' => $subfolder->id]) }}" class="text-decoration-none">
-                                                <i class="fas fa-folder fa-4x folder-icon"></i>
-                                                <p class="mt-2 folder-name">{{ $subfolder->name }}</p>
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                            <h5 class="mb-3 text-start">📁 Carpetas</h5>
+
+                            @if ($subfolders->isEmpty())
+                                <p class="text-start">📂 No hay subcarpetas.</p>
+                            @else
+                                <div class="table-responsive" style="max-height: 300px; overflow: auto;">
+                                    <table class="table table-hover table-bordered align-middle">
+                                        <thead class="table-warning text-start">
+                                            <tr>
+                                                <th>📁 Nombre</th>
+                                                <th>Usuario</th>
+                                                <th>Fecha de Creación</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-start">
+                                            @foreach ($subfolders as $subfolder)
+                                                <tr>
+                                                    <td>
+                                                        <a href="{{ route('folders.explorer', ['id' => $subfolder->id]) }}" class="text-decoration-none fw-bold">
+                                                            📂 {{ $subfolder->name }}
+                                                        </a>
+                                                    </td>
+                                                    <td>{{ $subfolder->user->name ?? 'Desconocido' }}</td>
+                                                    <td>{{ $subfolder->created_at->format('d/m/Y H:i') }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
                         </div>
                     </div>
-
-                    <!-- 📄 Archivos dentro de la carpeta actual (formato tabla) -->
+                    <!-- 📄 Archivos dentro de la carpeta actual -->
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="mb-3">📄 Archivos</h5>
+                            <h5 class="mb-3 text-start">📄 Archivos</h5>
 
                             @if ($files->isEmpty())
-                                <p class="text-center">📂 No hay archivos en esta carpeta.</p>
+                                <p class="text-start">📂 No hay archivos en esta carpeta.</p>
                             @else
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-bordered text-center">
-                                        <thead class="table-dark">
+                                <div class="table-responsive" style="max-height: 350px; overflow: auto;">
+                                    <table class="table table-hover table-bordered align-middle">
+                                        <thead class="table-dark text-start">
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Nombre</th>
@@ -98,7 +114,7 @@
                                                 <th>Acciones</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody class="text-start">
                                             @foreach ($files as $file)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
@@ -112,11 +128,15 @@
                                                     <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
                                                     <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td>
                                                     <td>
-                                                        <a href="{{ route('files.show', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-info"><i class="fa-solid fa-eye" style="font-size: 0.75rem;"></i> </a>
-                                                        <a href="{{ route('files.edit', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-warning"> <i class="fa-solid fa-pen-to-square" style="font-size: 0.75rem;"></i> <!-- Icono de editar --> </a>
+                                                        <a href="{{ route('files.show', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-info">
+                                                            <i class="fa-solid fa-eye" style="font-size: 0.75rem;"></i>
+                                                        </a>
+                                                        <a href="{{ route('files.edit', ['file' => $file, 'from' => 'explorer']) }}" class="btn btn-sm btn-warning">
+                                                            <i class="fa-solid fa-pen-to-square" style="font-size: 0.75rem;"></i>
+                                                        </a>
                                                         <button type="button" class="btn btn-sm btn-danger" 
                                                             onclick="confirmDelete('{{ $file->id }}', '{{ $file->file_name?->name ?? 'Sin nombre' }}')">
-                                                            <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> <!-- Icono de eliminar -->  
+                                                            <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i>
                                                         </button>
                                                         <form id="delete-form-{{ $file->id }}" 
                                                             action="{{ route('files.destroy', $file->id) }}" method="POST">
@@ -133,6 +153,7 @@
                             @endif
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -255,7 +276,6 @@
     border-radius: 0 !important; /* Evita esquinas cuadradas individuales */
 }
 </style>
-
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         const success = document.getElementById('success-message');
@@ -278,8 +298,6 @@
         }
     });
 </script>
-
-
     <!-- ✅ Script para eliminar archivos con confirmación -->
     <script>
     function confirmDelete(fileId, fileName) {
@@ -325,6 +343,4 @@ $(function() {
     });
 });
 </script>
-
-
 </x-app-layout>
