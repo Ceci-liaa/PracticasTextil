@@ -5,17 +5,17 @@
         <div class="px-5 py-4 container-fluid">
             <div class="row">
                 <div class="col-12">
-                        @if (session('success'))
-                            <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
-                                {{ session('success') }}
-                            </div>
-                        @endif
+                @if (session('success'))
+                    <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-                        @if (session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
-                                {{ session('error') }}
-                            </div>
-                        @endif
+                @if (session('error'))
+                    <div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
                     <div class="alert alert-dark text-sm d-flex align-items-center justify-content-between" role="alert">
                         <strong style="font-size: 24px;">📂 Explorador de Archivos</strong>
@@ -255,6 +255,30 @@
     border-radius: 0 !important; /* Evita esquinas cuadradas individuales */
 }
 </style>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const success = document.getElementById('success-message');
+        const error = document.getElementById('error-message');
+
+        if (success) {
+            setTimeout(() => {
+                success.style.transition = 'opacity 1s';
+                success.style.opacity = 0;
+                setTimeout(() => success.remove(), 1000);
+            }, 5000);
+        }
+
+        if (error) {
+            setTimeout(() => {
+                error.style.transition = 'opacity 1s';
+                error.style.opacity = 0;
+                setTimeout(() => error.remove(), 1000);
+            }, 5000);
+        }
+    });
+</script>
+
 
     <!-- ✅ Script para eliminar archivos con confirmación -->
     <script>

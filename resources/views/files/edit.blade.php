@@ -9,6 +9,18 @@
                         <strong style="font-size: 24px;">Editar Archivo: {{ $file->name_original }}</strong>
                     </div>
 
+                    @if (session('success'))
+                        <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <div class="card">
                         <div class="card-body">
                             {{-- Mostrar la ruta de navegación --}}
@@ -92,6 +104,25 @@
 
         <x-app.footer />
     </main>
+
+    {{-- 🔹 Incluir jQuery si no está incluido en el layout --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{{-- 🔹 Script para ocultar automáticamente los mensajes --}}
+<script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            $('#success-message').fadeOut('slow', function () {
+                $(this).remove();
+            });
+            $('#error-message').fadeOut('slow', function () {
+                $(this).remove();
+            });
+        }, 5000); // ⏱️ Tiempo en milisegundos (5s)
+    });
+</script>
+
+
 </x-app-layout>
 
 <script>
