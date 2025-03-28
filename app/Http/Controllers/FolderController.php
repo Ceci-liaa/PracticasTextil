@@ -281,10 +281,17 @@ class FolderController extends Controller
     // Función para obtener sugerencias de búsqueda
     public function searchSuggestions(Request $request)
     {
-        $term = strtolower($request->input('term'));
+        $term = $request->input('term');
+    
+        // Asegurar que no sea nulo o completamente vacío (pero permitir "0")
+        if (!isset($term) || trim($term) === '') {
+            return response()->json([]);
+        }
+    
+        $term = strtolower($term); // Convertir para comparación insensible a mayúsculas
         $results = [];
     
-        // Buscar carpetas
+        // 🔍 Buscar carpetas
         $folderMatches = Folder::whereRaw('LOWER(name) LIKE ?', ["%{$term}%"])
             ->limit(5)
             ->get();
@@ -297,7 +304,7 @@ class FolderController extends Controller
             ];
         }
     
-        // Buscar archivos por nombre completo (prefijo + nombre predefinido + sufijo)
+        // 🔍 Buscar archivos por nombre completo
         $fileMatches = File::with('file_name')
             ->get()
             ->filter(function ($file) use ($term) {
@@ -323,6 +330,7 @@ class FolderController extends Controller
             ];
         }
     
+        // ⚠️ Si no hay resultados
         if (empty($results)) {
             $results[] = [
                 'label' => '❌ Carpeta o archivo no encontrado',

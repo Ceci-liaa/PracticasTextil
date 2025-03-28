@@ -256,8 +256,6 @@
 }
 </style>
 
-
-
     <!-- ✅ Script para eliminar archivos con confirmación -->
     <script>
     function confirmDelete(fileId, fileName) {
@@ -294,9 +292,11 @@ $(function() {
                 }
             });
         },
-        minLength: 2,
+        minLength: 1, // ✅ Ahora permite búsquedas desde 1 carácter
         select: function(event, ui) {
-            window.location.href = ui.item.url;
+            if (ui.item.url) {
+                window.location.href = ui.item.url;
+            }
         }
     });
 });
