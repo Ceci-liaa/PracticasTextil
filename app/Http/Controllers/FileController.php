@@ -258,7 +258,7 @@ class FileController extends Controller
         }
 
         $extension = strtolower($file->type);
-        $previewUrl = asset("storage/files/{$file->name_original}");
+        $previewUrl = asset("storage/files/{$file->name_stored}");
 
         // Tipos compatibles
         $supported = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'xls', 'xlsx'];
