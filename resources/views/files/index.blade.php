@@ -38,9 +38,14 @@
                                         @foreach ($files as $file)                                             
                                             <tr>                                                 
                                                 <td>{{ $loop->iteration }}</td>                                                 
-                                                <td>
+                                                <!-- <td>
                                                     <a href="{{ route('files.preview', $file->id) }}" class="text-decoration-none fw-bold">
                                                         📄 {{ $file->file_name?->name ?? 'Sin nombre' }}
+                                                    </a>
+                                                </td> -->
+                                                <td>
+                                                    <a href="{{ route('files.preview', $file->id) }}" class="text-decoration-none fw-bold">
+                                                        📄 {{ $file->nombre_completo ?? 'Sin nombre' }}
                                                     </a>
                                                 </td>
                                                 <td>{{ $file->type }}</td>                                                 

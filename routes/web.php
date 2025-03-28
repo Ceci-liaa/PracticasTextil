@@ -166,7 +166,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/file_names', [FileNameController::class, 'store'])->name('file_names.store');
     Route::get('/file_names/{fileName}/edit', [FileNameController::class, 'edit'])->name('file_names.edit');
     Route::put('/file_names/{fileName}', [FileNameController::class, 'update'])->name('file_names.update');
-    Route::delete('/file_names/{fileName}', [FileNameController::class, 'destroy'])->name('file_names.destroy');
+    Route::patch('/file-names/{id}/deactivate', [FileNameController::class, 'deactivate'])->name('file-names.deactivate');
+    Route::patch('/file-names/{id}/activate', [FileNameController::class, 'activate'])->name('file-names.activate');
+    
 
     // Gestión de Archivos
     Route::get('/files', [FileController::class, 'index'])->name('files.index');

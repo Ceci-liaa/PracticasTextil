@@ -44,14 +44,17 @@
                                                 <td>{{ $fileName->updated_at->format('d/m/Y H:i:s') }}</td> <!-- 🔹 Fecha y hora de actualización -->
                                                 <td>
                                                     <a href="{{ route('file_names.edit', $fileName->id) }}" class="btn btn-sm btn-warning"> <i class="fa-solid fa-pen-to-square" style="font-size: 0.75rem;"></i> <!-- Icono de editar --> </a>
-                                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ $fileName->id }}', '{{ $fileName->name }}')">
-                                                        <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> <!-- Icono de eliminar -->  
-                                                    </button>
-
-                                                    <form id="delete-form-{{ $fileName->id }}" action="{{ route('file_names.destroy', $fileName->id) }}" method="POST" style="display: none;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                    </form>
+                                                    @if ($fileName->activo)
+                                                        <form method="POST" action="{{ route('file-names.deactivate', $fileName->id) }}" style="display:inline;">
+                                                            @csrf @method('PATCH')
+                                                            <button class="btn btn-warning btn-sm">Desactivar</button>
+                                                        </form>
+                                                    @else
+                                                        <form method="POST" action="{{ route('file-names.activate', $fileName->id) }}" style="display:inline;">
+                                                            @csrf @method('PATCH')
+                                                            <button class="btn btn-success btn-sm">Reactivar</button>
+                                                        </form>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -87,21 +90,5 @@
             }, 5000);
         });
 
-        function confirmDelete(id, name) {
-            Swal.fire({
-                title: "¿Eliminar nombre de archivo?",
-                text: `¿Está seguro de que desea eliminar "${name}"? Esta acción no se puede deshacer.`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Sí, eliminar",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`delete-form-${id}`).submit();
-                }
-            });
-        }
     </script>
 </x-app-layout>

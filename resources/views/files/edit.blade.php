@@ -39,6 +39,15 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    <div class="mb-3 form-group">
+                                        <label class="form-label">Prefijo (opcional):</label>
+                                        <input type="text" name="prefix" class="form-control" value="{{ old('prefix', $file->prefix ?? '') }}" placeholder="Ej: 1.-">
+                                    </div>
+
+                                    <div class="mb-3 form-group">
+                                        <label class="form-label">Sufijo (opcional):</label>
+                                        <input type="text" name="suffix" class="form-control" value="{{ old('suffix', $file->suffix ?? '') }}" placeholder="Ej: MLAB123">
+                                    </div>
                                 </div>
 
                                 {{-- Ubicación Actual --}}

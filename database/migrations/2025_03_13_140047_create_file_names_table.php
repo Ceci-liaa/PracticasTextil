@@ -9,7 +9,8 @@ return new class extends Migration {
     {
         Schema::create('file_names', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique(); // Nombre permitido para archivos
+            $table->string('name')->unique();
+            $table->boolean('activo')->default(true); // Estado activo/desactivado
             $table->timestamps();
         });
     }

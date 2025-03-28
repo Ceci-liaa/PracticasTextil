@@ -228,27 +228,30 @@ class FolderController extends Controller
             $folderIds = array_merge($folderIds, $this->getAllDescendantFolderIds($id));
         }
     
-        // Subcarpetas inmediatas
+        // Carpetas hijas inmediatas o por búsqueda
         $querySubfolders = Folder::where('parent_id', $id);
-    
-        // Si hay búsqueda, mostrar carpetas y archivos que coincidan
         if ($search) {
-            $querySubfolders = Folder::whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']);
-    
-            $queryFiles = File::with(['file_name', 'user'])
-            ->whereHas('file_name', function ($q) use ($search) {
-                $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']);
-            });
-        
-        } else {
-            $queryFiles = File::with(['file_name', 'user'])->where('folder_id', $id);
+            $querySubfolders = Folder::whereIn('parent_id', $folderIds)
+                ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']);
         }
     
         $subfolders = $querySubfolders->get();
+    
+        // Archivos
+        $queryFiles = File::with(['file_name', 'user'])->whereIn('folder_id', $folderIds);
+    
+        if ($search) {
+            $queryFiles->where(function ($q) use ($search) {
+                $search = strtolower($search);
+    
+                $q->whereRaw("LOWER(prefix || ' ' || COALESCE((SELECT name FROM file_names WHERE id = file_name_id), '') || ' ' || suffix) LIKE ?", ["%{$search}%"]);
+            });
+        }
+    
         $files = $queryFiles->latest()->get();
     
         return view('folders.explorer', compact('folder', 'subfolders', 'files'));
-    }
+    }    
     
     public function getSubfolders(Request $request)
     {
@@ -281,7 +284,7 @@ class FolderController extends Controller
         $term = strtolower($request->input('term'));
         $results = [];
     
-        // Aceptar cualquier combinación: letras, números y símbolos
+        // Buscar carpetas
         $folderMatches = Folder::whereRaw('LOWER(name) LIKE ?', ["%{$term}%"])
             ->limit(5)
             ->get();
@@ -294,17 +297,28 @@ class FolderController extends Controller
             ];
         }
     
+        // Buscar archivos por nombre completo (prefijo + nombre predefinido + sufijo)
         $fileMatches = File::with('file_name')
-            ->whereHas('file_name', fn($q) =>
-                $q->whereRaw('LOWER(name) LIKE ?', ["%{$term}%"])
-            )
-            ->limit(5)
-            ->get();
+            ->get()
+            ->filter(function ($file) use ($term) {
+                $nombreCompleto = strtolower(trim(
+                    ($file->prefix ? $file->prefix . ' ' : '') .
+                    ($file->file_name->name ?? '') .
+                    ($file->suffix ? ' ' . $file->suffix : '')
+                ));
+                return str_contains($nombreCompleto, $term);
+            });
     
         foreach ($fileMatches as $file) {
+            $nombreCompleto = trim(
+                ($file->prefix ? $file->prefix . ' ' : '') .
+                ($file->file_name->name ?? '') .
+                ($file->suffix ? ' ' . $file->suffix : '')
+            );
+    
             $results[] = [
-                'label' => '📄 ' . ($file->file_name->name ?? 'Sin nombre'),
-                'value' => $file->file_name->name,
+                'label' => '📄 ' . $nombreCompleto,
+                'value' => $nombreCompleto,
                 'url' => route('files.show', ['file' => $file->id, 'from' => 'explorer'])
             ];
         }
@@ -318,5 +332,6 @@ class FolderController extends Controller
         }
     
         return response()->json($results);
-    }    
+    }
+    
 }

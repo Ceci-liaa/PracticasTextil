@@ -52,6 +52,13 @@ class FileController extends Controller
     //         'file_name_id' => 'required|exists:file_names,id',
     //         'folder_id' => 'nullable|exists:folders,id', // Puede ser null si es desde gestión
     //     ]);
+
+    //     if (!$request->filled('folder_id')) {
+    //         return redirect()
+    //             ->back()
+    //             ->withInput()
+    //             ->with('error', '⚠️ Debes seleccionar una carpeta antes de subir el archivo.');
+    //     }           
     
     //     $uploadedFile = $request->file('uploaded_file');
     //     $originalName = $uploadedFile->getClientOriginalName();
@@ -70,64 +77,77 @@ class FileController extends Controller
     //     ]);
     
     //     // 🔹 Verificar si la subida fue desde el Explorador o desde la Gestión de Archivos
-    //     if ($request->has('from')) {
-    //         if ($request->input('from') === 'explorer') {
-    //             return redirect()->route('folders.explorer', ['id' => $request->folder_id])
-    //                              ->with('success', 'Archivo subido correctamente.');
-    //         } elseif ($request->input('from') === 'index') {
-    //             return redirect()->route('files.index')->with('success', 'Archivo subido correctamente.');
-    //         }
+    //     $from = $request->input('from');
+    
+    //     if ($from === 'explorer') {
+    //         return redirect()
+    //             ->route('folders.explorer', ['id' => $request->folder_id])
+    //             ->with('success', 'Archivo subido correctamente desde el Explorador.');
     //     }
     
-    //     // 🔹 Si no se especifica "from", por defecto se queda en la Gestión de Archivos
-    //     return redirect()->route('files.index')->with('success', 'Archivo subido correctamente.');
-    // }   
+    //     // 🔹 Si no se especifica "from" o es diferente, redirigir a la gestión de archivos
+    //     return redirect()
+    //         ->route('files.index')
+    //         ->with('success', 'Archivo subido correctamente.');
+    // }          
+    
     public function store(Request $request)
     {
         $request->validate([
-            'uploaded_file' => 'required|file|max:5120', // max 5MB
+            'uploaded_file' => 'required|file',
             'file_name_id' => 'required|exists:file_names,id',
-            'folder_id' => 'nullable|exists:folders,id', // Puede ser null si es desde gestión
+            'folder_id' => 'required|exists:folders,id',
+        ], [
+            'uploaded_file.required' => '⚠️ Debes subir un archivo.',
+            'file_name_id.required' => '⚠️ Debes seleccionar un nombre predefinido.',
+            'file_name_id.exists' => '⚠️ El nombre predefinido no es válido.',
+            'folder_id.required' => '⚠️ Debes seleccionar una carpeta antes de subir el archivo.',
+            'folder_id.exists' => '⚠️ La carpeta seleccionada no existe.',
         ]);
-
-        if (!$request->filled('folder_id')) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('error', '⚠️ Debes seleccionar una carpeta antes de subir el archivo.');
-        }           
     
+        $prefix = trim($request->input('prefix'));
+        $suffix = trim($request->input('suffix'));
+        $baseName = FileName::findOrFail($request->file_name_id)->name;
         $uploadedFile = $request->file('uploaded_file');
-        $originalName = $uploadedFile->getClientOriginalName();
-        $extension = $uploadedFile->getClientOriginalExtension();
-        
-        // 🔹 Guardar el archivo con su nombre original en `storage/app/public/files/`
-        $filePath = $uploadedFile->storeAs('public/files', $originalName);
     
-        // 🔹 Guardar en la base de datos
-        $file = File::create([
+        $extension = $uploadedFile->getClientOriginalExtension();
+        $originalName = $uploadedFile->getClientOriginalName();
+    
+        $finalName = ($prefix ? $prefix . ' ' : '') . $baseName . ($suffix ? ' ' . $suffix : '');
+        $finalFileName = $finalName . '.' . $extension;
+    
+        // Verificar duplicado en la carpeta
+        $exists = File::where('folder_id', $request->folder_id)
+            ->where('prefix', $prefix ?: null)
+            ->where('suffix', $suffix ?: null)
+            ->where('file_name_id', $request->file_name_id)
+            ->exists();
+    
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', '⚠️ Ya existe un archivo con el mismo nombre en esta carpeta.');
+        }
+    
+        // Guardar en disco
+        $uploadedFile->storeAs('public/files', $finalFileName);
+    
+        // Guardar en BD
+        File::create([
             'file_name_id' => $request->file_name_id,
+            'prefix' => $prefix ?: null,
+            'suffix' => $suffix ?: null,
             'name_original' => $originalName,
+            'name_stored' => $finalFileName,
             'type' => strtoupper($extension),
-            'folder_id' => $request->folder_id, // Puede ser null si es desde gestión
+            'folder_id' => $request->folder_id,
             'user_id' => auth()->id(),
         ]);
     
-        // 🔹 Verificar si la subida fue desde el Explorador o desde la Gestión de Archivos
-        $from = $request->input('from');
-    
-        if ($from === 'explorer') {
-            return redirect()
-                ->route('folders.explorer', ['id' => $request->folder_id])
-                ->with('success', 'Archivo subido correctamente desde el Explorador.');
-        }
-    
-        // 🔹 Si no se especifica "from" o es diferente, redirigir a la gestión de archivos
-        return redirect()
-            ->route('files.index')
-            ->with('success', 'Archivo subido correctamente.');
-    }          
-    
+        return $request->input('from') === 'explorer'
+            ? redirect()->route('folders.explorer', ['id' => $request->folder_id])->with('success', '✅ Archivo subido correctamente.')
+            : redirect()->route('files.index')->with('success', '✅ Archivo subido correctamente.');
+    }
+         
+
     public function show(File $file, Request $request)
     {
         return view('files.show', compact('file'))
@@ -170,49 +190,62 @@ class FileController extends Controller
     
         return view('files.edit', compact('file', 'fileNames', 'allFolders', 'parentFolders', 'breadcrumb', 'currentFolderId'));
     }      
-    
+
     public function update(Request $request, File $file)
     {
-        // dd($request->all()); // Verificar los datos enviados
-
         $request->validate([
             'file_name_id' => 'required|exists:file_names,id',
             'folder_id' => 'required|exists:folders,id',
         ]);
     
-        // 🔄 Actualizar los datos manualmente
-        $file->file_name_id = $request->file_name_id;
-        $file->folder_id = $request->folder_id;
-        $file->save();
+        $prefix = trim($request->input('prefix'));
+        $suffix = trim($request->input('suffix'));
+        $baseName = FileName::findOrFail($request->file_name_id)->name;
+        $extension = strtolower($file->type);
     
-        // 🔹 Verificar si el parámetro "from" fue enviado y redirigir correctamente
-        if ($request->has('from') && $request->input('from') === 'explorer') {
-            return redirect()->route('folders.explorer', ['id' => $file->folder_id])
-                             ->with('success', 'Archivo actualizado correctamente.');
+        $finalName = ($prefix ? $prefix . ' ' : '') . $baseName . ($suffix ? ' ' . $suffix : '');
+        $finalFileName = $finalName . '.' . $extension;
+    
+        // Renombrar archivo físico si cambió el nombre
+        $oldPath = storage_path("app/public/files/{$file->name_original}");
+        $newPath = storage_path("app/public/files/{$finalFileName}");
+    
+        if ($file->name_original !== $finalFileName && file_exists($oldPath)) {
+            rename($oldPath, $newPath);
         }
     
-        // 🔹 Si "from" no se envió correctamente, por defecto, se queda en Gestión de Archivos
-        return redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente.');
-    }    
-
-public function download(File $file)
-{
-    // 🔹 Si el archivo está en la nube, redirigir a su URL
-    if ($file->storage_url) {
-        return redirect($file->storage_url);
+        // Actualizar datos en la base de datos
+        $file->update([
+            'file_name_id' => $request->file_name_id,
+            'prefix' => $prefix ?: null,
+            'suffix' => $suffix ?: null,
+            'folder_id' => $request->folder_id,
+            'name_original' => $finalFileName,
+        ]);
+    
+        return $request->input('from') === 'explorer'
+            ? redirect()->route('folders.explorer', ['id' => $file->folder_id])->with('success', 'Archivo actualizado correctamente.')
+            : redirect()->route('files.index')->with('success', 'Archivo actualizado correctamente.');
     }
-
-    // 🔹 Buscar el archivo en `storage/app/public/files/`
-    $filePath = storage_path('app/public/files/' . $file->name_original);
-
-    // 🔹 Verificar si el archivo existe en la ruta correcta
-    if (!file_exists($filePath)) {
-        return redirect()->back()->with('error', 'El archivo no existe en el servidor.');
+    
+    public function download(File $file)
+    {
+        // 🔹 Si está en la nube
+        if ($file->storage_url) {
+            return redirect($file->storage_url);
+        }
+    
+        // 🔹 Usar `name_stored` para ubicar el archivo
+        $filePath = storage_path('app/public/files/' . $file->name_stored);
+    
+        if (!file_exists($filePath)) {
+            return redirect()->back()->with('error', 'El archivo no existe en el servidor.');
+        }
+    
+        // 🔹 Descargar con el nombre visible bonito
+        return response()->download($filePath, $file->nombre_completo . '.' . strtolower($file->type));
     }
-
-    // 🔹 Descargar el archivo con el nombre predefinido y su extensión correcta
-    return response()->download($filePath, $file->file_name->name . '.' . $file->type);
-}
+    
 
     // Método para visualizar un archivo
     public function preview($id)

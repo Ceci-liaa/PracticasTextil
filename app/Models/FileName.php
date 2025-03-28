@@ -11,5 +11,5 @@ class FileName extends Model
 
     protected $table = 'file_names'; // Asegura que apunta a la tabla correcta
 
-    protected $fillable = ['name']; // Campos que se pueden asignar masivamente
+    protected $fillable = ['name', 'activo']; // Campos que se pueden asignar masivamente
 }

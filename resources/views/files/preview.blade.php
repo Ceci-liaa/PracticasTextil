@@ -91,7 +91,7 @@
 <body>
     <h4>
         Vista Previa: 
-        <span class="file-name">{{ $file->name_original }}</span>
+        <span class="file-name">{{ $file->nombre_completo }}</span>
     </h4>
 
     @if (in_array($extension, ['pdf']))

@@ -4,16 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('file_name_id'); // Relación con nombres predefinidos
-            $table->string('name_original'); // Nombre original del archivo
-            $table->string('type', 50); // Tipo de archivo (PDF, JPG, PNG, etc.)
-            $table->unsignedBigInteger('folder_id'); // Relación con carpeta
-            $table->unsignedBigInteger('user_id'); // Usuario que subió el archivo
+            $table->unsignedBigInteger('file_name_id');
+            $table->string('prefix')->nullable();
+            $table->string('suffix')->nullable();
+            $table->string('name_original'); // Nombre con el que subió el usuario
+            $table->string('name_stored');   // Nombre con el que se guardó en el servidor
+            $table->string('type', 50);
+            $table->unsignedBigInteger('folder_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
             // Relaciones

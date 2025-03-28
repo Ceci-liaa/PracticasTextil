@@ -33,7 +33,8 @@ class FileNameController extends Controller
 
         FileName::create([
             'name' => $request->name,
-        ]);
+            'activo' => true, // o $request->has('activo') si usas checkbox
+        ]);        
 
         return redirect()->route('file_names.index')->with('success', ' Nombre de archivo creado correctamente.');
     }
@@ -62,12 +63,24 @@ class FileNameController extends Controller
     
         return redirect()->route('file_names.index')->with('success', ' Nombre de archivo actualizado correctamente.');
     }
-    
-    // Eliminar un nombre de archivo
-    public function destroy(FileName $fileName)
+
+    // Activar o desactivar un nombre de archivo
+    public function deactivate($id)
     {
-        $fileName->delete();
-        return redirect()->route('file_names.index')->with('success', ' Nombre de archivo eliminado correctamente.');
+        $fileName = FileName::findOrFail($id);
+        $fileName->activo = false;
+        $fileName->save();
+    
+        return redirect()->route('file_names.index')->with('success', 'Nombre de archivo desactivado correctamente.');
     }
+    
+    public function activate($id)
+    {
+        $fileName = FileName::findOrFail($id);
+        $fileName->activo = true;
+        $fileName->save();
+    
+        return redirect()->route('file_names.index')->with('success', 'Nombre de archivo reactivado correctamente.');
+    }    
 
 }

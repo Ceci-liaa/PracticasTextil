@@ -137,5 +137,16 @@ class Folder extends Model
         return false;
     }
 
+// App\Models\File.php
+
+public function getNombreCompletoAttribute()
+{
+    return trim(
+        ($this->prefix ? $this->prefix . ' ' : '') .
+        ($this->file_name->name ?? '') .
+        ($this->suffix ? ' ' . $this->suffix : '')
+    );
+}
+
 }
 

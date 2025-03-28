@@ -9,9 +9,13 @@
                         <strong style="font-size: 24px;">Subir Nuevo Archivo</strong>
                     </div>
 
-                    @if (session('error'))
-                        <div id="error-alert" class="alert alert-danger">
-                            {{ session('error') }}
+                    @if ($errors->any())
+                        <div id="error-message" class="alert alert-danger alert-dismissible fade show">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     @endif
 
@@ -50,8 +54,16 @@
                                             <option value="{{ $fileName->id }}">{{ $fileName->name }}</option>
                                         @endforeach
                                     </select>
-                                </div>
+                                    <div class="mb-3 form-group">
+                                        <label class="form-label">Prefijo (opcional):</label>
+                                        <input type="text" name="prefix" class="form-control" placeholder="Ej: 1.-">
+                                    </div>
 
+                                    <div class="mb-3 form-group">
+                                        <label class="form-label">Sufijo (opcional):</label>
+                                        <input type="text" name="suffix" class="form-control" placeholder="Ej: MLAB123">
+                                    </div>
+                                </div>
                                 {{-- Selección de Carpeta --}}
                                 <div class="mb-3 form-group">
                                     <label class="form-label">Seleccionar Carpeta:</label>
@@ -91,20 +103,15 @@
         <x-app.footer />
     </main>
     <script>
-    // Esperar a que cargue el DOM
-    document.addEventListener('DOMContentLoaded', function () {
-        const errorAlert = document.getElementById('error-alert');
-        if (errorAlert) {
-            setTimeout(() => {
-                errorAlert.style.transition = "opacity 0.5s ease";
-                errorAlert.style.opacity = 0;
-
-                // Eliminar del DOM después del fade out
-                setTimeout(() => {
-                    errorAlert.remove();
-                }, 500);
-            }, 5000); // Espera 5 segundos antes de ocultar
-        }
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            const error = document.getElementById("error-message");
+            if (error) {
+                error.style.transition = "opacity 0.5s ease";
+                error.style.opacity = 0;
+                setTimeout(() => error.remove(), 500);
+            }
+        }, 5000);
     });
 </script>
 

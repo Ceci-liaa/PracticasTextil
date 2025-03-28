@@ -15,8 +15,7 @@
                                 <li class="list-group-item"><strong>ID:</strong> {{ $file->id }}</li>
                                 <li class="list-group-item"><strong>Nombre Original:</strong> {{ $file->name_original }}</li>
                                 <li class="list-group-item"><strong>Tipo:</strong> {{ $file->type }}</li>
-                                <li class="list-group-item"><strong>Nombre Predefinido:</strong> {{ $file->file_name->name }}</li>
-                                
+                                <li class="list-group-item"><strong>Nombre completo:</strong> {{ $file->nombre_completo }}</li>                                
                                 {{-- Mostrar la ubicación en formato "Hola\Estudios\Textil" --}}
                                 <li class="list-group-item"><strong>Ubicación:</strong> 
                                     {{ $file->folder ? implode('\\', $file->folder->getAncestors()->pluck('name')->toArray()) . '\\' . $file->folder->name : 'Raíz' }}
@@ -27,7 +26,7 @@
                                 <li class="list-group-item">
                                     <strong>Descargar Archivo:</strong> 
                                     <a href="{{ route('files.download', $file->id) }}" class="text-decoration-none text-primary">
-                                        📥 Descargar {{ $file->file_name->name }}.{{ $file->type }}
+                                        📥 Descargar {{ $file->nombre_completo }}.{{ strtolower($file->type) }}
                                     </a>
                                 </li>
                             </ul>

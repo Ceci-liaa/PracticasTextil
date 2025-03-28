@@ -11,13 +11,26 @@ class File extends Model
 
     protected $fillable = [
         'file_name_id',
+        'prefix',
+        'suffix',
         'name_original',
+        'name_stored', // ¡esto es esencial!
         'type',
         'folder_id',
-        'user_id'
+        'user_id',
     ];
+    
+    
+// File.php
+    public function getNombreCompletoAttribute()
+    {
+        $parts = [];
+        if ($this->prefix) $parts[] = $this->prefix;
+        if ($this->file_name) $parts[] = $this->file_name->name;
+        if ($this->suffix) $parts[] = $this->suffix;
 
-
+        return implode(' ', $parts);
+    }
 
     // Relaciones
     public function file_name()
