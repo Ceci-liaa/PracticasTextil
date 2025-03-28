@@ -9,6 +9,12 @@
                         <strong style="font-size: 24px;">Subir Nuevo Archivo</strong>
                     </div>
 
+                    @if (session('error'))
+                        <div id="error-alert" class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <div class="card">
                         <div class="card-body">
                             {{-- Mostrar la ruta de navegación --}}
@@ -82,9 +88,26 @@
                 </div>
             </div>
         </div>
-
         <x-app.footer />
     </main>
+    <script>
+    // Esperar a que cargue el DOM
+    document.addEventListener('DOMContentLoaded', function () {
+        const errorAlert = document.getElementById('error-alert');
+        if (errorAlert) {
+            setTimeout(() => {
+                errorAlert.style.transition = "opacity 0.5s ease";
+                errorAlert.style.opacity = 0;
+
+                // Eliminar del DOM después del fade out
+                setTimeout(() => {
+                    errorAlert.remove();
+                }, 500);
+            }, 5000); // Espera 5 segundos antes de ocultar
+        }
+    });
+</script>
+
 </x-app-layout>
 
 {{-- Estilos Personalizados --}}

@@ -30,7 +30,7 @@
                                 <table class="table table-hover table-bordered text-center">
                                     <thead class="table-dark">
                                         <tr>
-                                            <th>#</th> <!-- Número secuencial -->
+                                            <th>ID</th> <!-- Número secuencial -->
                                             <th>Nombre</th>
                                             <th>Última Modificación</th> <!-- Nueva columna -->
                                             <th>Acciones</th>

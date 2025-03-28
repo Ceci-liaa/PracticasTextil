@@ -38,7 +38,11 @@
                                         @foreach ($files as $file)                                             
                                             <tr>                                                 
                                                 <td>{{ $loop->iteration }}</td>                                                 
-                                                <td><strong>{{ $file->file_name?->name ?? 'Sin nombre' }}</strong></td>                                                 
+                                                <td>
+                                                    <a href="{{ route('files.preview', $file->id) }}" class="text-decoration-none fw-bold">
+                                                        📄 {{ $file->file_name?->name ?? 'Sin nombre' }}
+                                                    </a>
+                                                </td>
                                                 <td>{{ $file->type }}</td>                                                 
                                                 <td><strong>{{ $file->full_path }}</strong></td>                                                
                                                 <td>{{ $file->user->name }}</td>                                                 
@@ -76,9 +80,8 @@
                 </div>             
             </div>         
         </div>          
-
-        <x-app.footer />     
-    </main>      
+        </main>      
+    <x-app.footer />     
 
     <!-- ✅ Script para ocultar el mensaje después de 5 segundos -->     
     <script>         

@@ -102,7 +102,11 @@
                                             @foreach ($files as $file)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td><strong>{{ $file->file_name?->name ?? 'Sin nombre' }}</strong></td>
+                                                    <td>
+                                                        <a href="{{ route('files.preview', $file->id) }}" class="text-decoration-none fw-bold">
+                                                            📄 {{ $file->file_name?->name ?? 'Sin nombre' }}
+                                                        </a>
+                                                    </td>
                                                     <td>{{ $file->type }}</td>
                                                     <td>{{ $file->user->name }}</td>
                                                     <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>

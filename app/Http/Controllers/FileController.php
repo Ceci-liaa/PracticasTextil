@@ -89,6 +89,13 @@ class FileController extends Controller
             'file_name_id' => 'required|exists:file_names,id',
             'folder_id' => 'nullable|exists:folders,id', // Puede ser null si es desde gestión
         ]);
+
+        if (!$request->filled('folder_id')) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', '⚠️ Debes seleccionar una carpeta antes de subir el archivo.');
+        }           
     
         $uploadedFile = $request->file('uploaded_file');
         $originalName = $uploadedFile->getClientOriginalName();
@@ -207,6 +214,28 @@ public function download(File $file)
     return response()->download($filePath, $file->file_name->name . '.' . $file->type);
 }
 
+    // Método para visualizar un archivo
+    public function preview($id)
+    {
+        $file = File::findOrFail($id);
+
+        // Verifica permisos
+        if (auth()->id() !== $file->user_id && !auth()->user()->is_admin) {
+            abort(403);
+        }
+
+        $extension = strtolower($file->type);
+        $previewUrl = asset("storage/files/{$file->name_original}");
+
+        // Tipos compatibles
+        $supported = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'xls', 'xlsx'];
+
+        if (!in_array($extension, $supported)) {
+            return view('files.unsupported', compact('file'));
+        }
+
+        return view('files.preview', compact('file', 'previewUrl', 'extension'));
+    }
     // probar que datos no mas estan mostrandose en la vista
 //     public function download(File $file)
 // {

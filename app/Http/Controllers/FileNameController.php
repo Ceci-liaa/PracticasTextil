@@ -69,4 +69,5 @@ class FileNameController extends Controller
         $fileName->delete();
         return redirect()->route('file_names.index')->with('success', ' Nombre de archivo eliminado correctamente.');
     }
+
 }
