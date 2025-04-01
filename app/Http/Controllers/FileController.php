@@ -17,11 +17,21 @@ class FileController extends Controller
 {
     public function index()
     {
-    // Cargar archivos sin caché para asegurar que los cambios sean visibles en ambas interfaces
-        $files = File::with('file_name', 'user')->latest()->paginate(10);
-
+        // Ordenar archivos por nombre compuesto (prefijo + nombre predefinido + sufijo)
+        $files = File::with(['file_name', 'user'])
+            ->leftJoin('file_names', 'files.file_name_id', '=', 'file_names.id')
+            ->orderByRaw("
+                LOWER(
+                    COALESCE(prefix, '') || ' ' || 
+                    COALESCE(file_names.name, '') || ' ' || 
+                    COALESCE(suffix, '')
+                )
+            ")
+            ->select('files.*') // importante para evitar conflictos por join
+            ->paginate(10);
+    
         return view('files.index', compact('files'));
-    }
+    }    
     
     public function create(Request $request)
     {
@@ -29,8 +39,20 @@ class FileController extends Controller
         $currentFolder = Folder::find($currentFolderId);
     
         // Obtener subcarpetas de la carpeta actual
-        $folders = Folder::where('parent_id', $currentFolderId)->get();
-        $fileNames = FileName::all();
+        $folders = Folder::where('parent_id', $currentFolderId)
+        ->orderByRaw("
+            CASE 
+                WHEN name ~ '^[0-9]+\\.-' THEN 0
+                ELSE 1
+            END,
+            CASE 
+                WHEN name ~ '^[0-9]+\\.-' THEN (string_to_array(name, '.-'))[1]::INTEGER
+                ELSE NULL
+            END,
+            name
+        ")
+        ->get();
+            $fileNames = FileName::all();
     
         // Asegurar que $breadcrumb sea una colección de Laravel
         $breadcrumb = collect(); 
@@ -44,52 +66,6 @@ class FileController extends Controller
     
         return view('files.create', compact('folders', 'fileNames', 'breadcrumb', 'currentFolderId'));
     }    
-    
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'uploaded_file' => 'required|file|max:5120', // max 5MB
-    //         'file_name_id' => 'required|exists:file_names,id',
-    //         'folder_id' => 'nullable|exists:folders,id', // Puede ser null si es desde gestión
-    //     ]);
-
-    //     if (!$request->filled('folder_id')) {
-    //         return redirect()
-    //             ->back()
-    //             ->withInput()
-    //             ->with('error', '⚠️ Debes seleccionar una carpeta antes de subir el archivo.');
-    //     }           
-    
-    //     $uploadedFile = $request->file('uploaded_file');
-    //     $originalName = $uploadedFile->getClientOriginalName();
-    //     $extension = $uploadedFile->getClientOriginalExtension();
-        
-    //     // 🔹 Guardar el archivo con su nombre original en `storage/app/public/files/`
-    //     $filePath = $uploadedFile->storeAs('public/files', $originalName);
-    
-    //     // 🔹 Guardar en la base de datos
-    //     $file = File::create([
-    //         'file_name_id' => $request->file_name_id,
-    //         'name_original' => $originalName,
-    //         'type' => strtoupper($extension),
-    //         'folder_id' => $request->folder_id, // Puede ser null si es desde gestión
-    //         'user_id' => auth()->id(),
-    //     ]);
-    
-    //     // 🔹 Verificar si la subida fue desde el Explorador o desde la Gestión de Archivos
-    //     $from = $request->input('from');
-    
-    //     if ($from === 'explorer') {
-    //         return redirect()
-    //             ->route('folders.explorer', ['id' => $request->folder_id])
-    //             ->with('success', 'Archivo subido correctamente desde el Explorador.');
-    //     }
-    
-    //     // 🔹 Si no se especifica "from" o es diferente, redirigir a la gestión de archivos
-    //     return redirect()
-    //         ->route('files.index')
-    //         ->with('success', 'Archivo subido correctamente.');
-    // }          
     
     public function store(Request $request)
     {
@@ -168,11 +144,33 @@ class FileController extends Controller
     {
         $fileNames = FileName::all();
         
-        // Obtener todas las carpetas (tanto padres como hijas)
-        $allFolders = Folder::with('parent')->get();
+        $allFolders = Folder::with('parent')
+        ->orderByRaw("
+            CASE 
+                WHEN name ~ '^[0-9]+\\.-' THEN 0
+                ELSE 1
+            END,
+            CASE 
+                WHEN name ~ '^[0-9]+\\.-' THEN (string_to_array(name, '.-'))[1]::INTEGER
+                ELSE NULL
+            END,
+            name
+        ")
+        ->get();
     
-        // Obtener las carpetas principales (padres sin parent_id)
-        $parentFolders = Folder::whereNull('parent_id')->get();
+    $parentFolders = Folder::whereNull('parent_id')
+        ->orderByRaw("
+            CASE 
+                WHEN name ~ '^[0-9]+\\.-' THEN 0
+                ELSE 1
+            END,
+            CASE 
+                WHEN name ~ '^[0-9]+\\.-' THEN (string_to_array(name, '.-'))[1]::INTEGER
+                ELSE NULL
+            END,
+            name
+        ")
+        ->get();    
     
         // Obtener la carpeta actual del archivo
         $currentFolderId = $request->input('folder_id', $file->folder_id);

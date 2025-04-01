@@ -64,7 +64,11 @@
                                             @foreach ($folder->files as $file)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td><strong>{{ $file->file_name?->name ?? 'Sin nombre' }}</strong></td>
+                                                    <td>
+                                                        {{ ($file->prefix ? $file->prefix . ' ' : '') .
+                                                        ($file->file_name->name ?? '') .
+                                                        ($file->suffix ? ' ' . $file->suffix : '') }}
+                                                    </td>
                                                     <td>{{ $file->type }}</td>
                                                     <td>{{ $file->user->name }}</td>
                                                     <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
