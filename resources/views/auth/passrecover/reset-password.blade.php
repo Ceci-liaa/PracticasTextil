@@ -43,17 +43,17 @@
                                         </div>
                                         <div class="mb-3">
                                             <input type="password" id="password" class="form-control" name="password"
-                                                placeholder="Enter your password" aria-label="Password" id="password"
+                                                placeholder="Ingresar tu contraseña" aria-label="Password" id="password"
                                                 name="password"required>
                                         </div>
                                         <div class="mb-3">
                                             <input type="password" id="password_confirmation" class="form-control"
-                                                name="password_confirmation" placeholder="Confirm your password"
+                                                name="password_confirmation" placeholder="Confirmar la contraseña"
                                                 aria-label="Password" id="password_confirmation"
                                                 name="password_confirmation" required>
                                             <div class="text-center">
                                                 <button type="submit"
-                                                    class="my-4 mb-2 btn btn-dark btn-lg w-100">Send</button>
+                                                    class="my-4 mb-2 btn btn-dark btn-lg w-100">Enviar</button>
                                             </div>
                                     </form>
                                 </div>
