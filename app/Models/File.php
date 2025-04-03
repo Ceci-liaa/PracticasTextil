@@ -25,12 +25,24 @@ class File extends Model
     public function getNombreCompletoAttribute()
     {
         $parts = [];
-        if ($this->prefix) $parts[] = $this->prefix;
-        if ($this->file_name) $parts[] = $this->file_name->name;
-        if ($this->suffix) $parts[] = $this->suffix;
 
-        return implode(' ', $parts);
+        if ($this->prefix) {
+            $parts[] = $this->prefix;
+        }
+
+        if ($this->file_name) {
+            $parts[] = $this->file_name->name;
+        }
+
+        if ($this->suffix) {
+            $parts[] = $this->suffix;
+        }
+
+        $nombreSinExtension = implode(' ', $parts);
+
+        return $nombreSinExtension . '.' . strtolower($this->type);
     }
+
 
     // Relaciones
     public function file_name()

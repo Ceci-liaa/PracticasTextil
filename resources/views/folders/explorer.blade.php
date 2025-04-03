@@ -107,7 +107,6 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Nombre</th>
-                                                <th>Tipo</th>
                                                 <th>Usuario</th>
                                                 <th>Fecha Subida</th>
                                                 <th>Fecha Modificación</th>
@@ -123,7 +122,6 @@
                                                             📄 {{ $file->nombre_completo ?? 'Sin nombre' }}
                                                         </a>
                                                     </td>
-                                                    <td>{{ $file->type }}</td>
                                                     <td>{{ $file->user->name }}</td>
                                                     <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
                                                     <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td>

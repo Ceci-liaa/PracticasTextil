@@ -56,15 +56,10 @@ class FolderController extends Controller
             $folder->load(['files' => function ($query) {
                 $query->with('file_name')
                     ->leftJoin('file_names', 'files.file_name_id', '=', 'file_names.id')
-                    ->orderByRaw("
-                        LOWER(
-                            COALESCE(prefix, '') || ' ' ||
-                            COALESCE(file_names.name, '') || ' ' ||
-                            COALESCE(suffix, '')
-                        )
-                    ")
-                    ->select('files.*'); // evitar conflicto con el join
-            }]);            
+                    ->orderByRaw(" -- (pega aquí el orderByRaw completo) ")
+                    ->select('files.*');
+            }]);
+                       
     
         return view('folders.show-folder', compact('folder', 'subfolders'));
     }    
@@ -87,7 +82,6 @@ class FolderController extends Controller
     
         return view('folders.create-folder', compact('folders'));        
     }
-
 
     public function store(Request $request)
     {
@@ -135,33 +129,33 @@ class FolderController extends Controller
     }
 
     public function update(Request $request, Folder $folder)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'parent_id' => 'nullable|exists:folders,id',
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:folders,id',
+        ]);
 
-    // Evitar nombres duplicados dentro de la misma carpeta padre
-    $exists = Folder::where('name', $request->name)
-        ->where('parent_id', $request->parent_id)
-        ->where('id', '!=', $folder->id)
-        ->exists();
+        // Evitar nombres duplicados dentro de la misma carpeta padre
+        $exists = Folder::where('name', $request->name)
+            ->where('parent_id', $request->parent_id)
+            ->where('id', '!=', $folder->id)
+            ->exists();
 
-    if ($exists) {
-        return redirect()->back()->withInput()->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación.');
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Ya existe una carpeta con este nombre en la misma ubicación.');
+        }
+
+        if ($folder->id == $request->parent_id || $this->isMovingIntoChild($folder->id, $request->parent_id)) {
+            return redirect()->route('folders.index')->with('error', 'No puedes mover una carpeta dentro de una de sus subcarpetas.');
+        }
+
+        $folder->update([
+            'name' => $request->name,
+            'parent_id' => $request->parent_id,
+        ]);
+
+        return redirect()->route('folders.index')->with('success', ' Carpeta actualizada correctamente.');
     }
-
-    if ($folder->id == $request->parent_id || $this->isMovingIntoChild($folder->id, $request->parent_id)) {
-        return redirect()->route('folders.index')->with('error', 'No puedes mover una carpeta dentro de una de sus subcarpetas.');
-    }
-
-    $folder->update([
-        'name' => $request->name,
-        'parent_id' => $request->parent_id,
-    ]);
-
-    return redirect()->route('folders.index')->with('success', ' Carpeta actualizada correctamente.');
-}
 
     // Eliminar una carpeta
     public function destroy(Folder $folder)
@@ -229,11 +223,31 @@ class FolderController extends Controller
             });
         }
     
-        $files = $queryFiles->latest()->get();
+        $files = $queryFiles
+        ->leftJoin('file_names', 'files.file_name_id', '=', 'file_names.id')
+        ->orderByRaw("
+        CASE 
+            WHEN (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')) ~ '^[0-9]+\\.-' THEN 0
+            ELSE 1
+        END,
+        CASE 
+            WHEN (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')) ~ '^[0-9]+\\.-' THEN 
+                CAST(
+                    regexp_replace(
+                        (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')),
+                        '^([0-9]+)\\..*',
+                        '\\1'
+                    ) AS INTEGER
+                )
+            ELSE NULL
+        END,
+        LOWER(COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, ''))
+    ")    
+        ->select('files.*')
+        ->get();    
     
         return view('folders.explorer', compact('folder', 'subfolders', 'files'));
-    }
-       
+    }  
     
     public function getSubfolders(Request $request)
     {
@@ -336,5 +350,4 @@ class FolderController extends Controller
     
         return response()->json($results);
     }
-    
 }

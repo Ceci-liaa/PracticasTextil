@@ -54,7 +54,6 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Nombre</th> <!-- Desde file_names -->
-                                                <th>Tipo</th>
                                                 <th>Usuario</th>
                                                 <th>Fecha Subida</th>
                                                 <th>Fecha Modificación</th>
@@ -69,7 +68,6 @@
                                                         ($file->file_name->name ?? '') .
                                                         ($file->suffix ? ' ' . $file->suffix : '') }}
                                                     </td>
-                                                    <td>{{ $file->type }}</td>
                                                     <td>{{ $file->user->name }}</td>
                                                     <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
                                                     <td>{{ $file->updated_at->format('d/m/Y H:i') }}</td>

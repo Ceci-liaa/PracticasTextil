@@ -19,16 +19,28 @@ class FileController extends Controller
     {
         // Ordenar archivos por nombre compuesto (prefijo + nombre predefinido + sufijo)
         $files = File::with(['file_name', 'user'])
-            ->leftJoin('file_names', 'files.file_name_id', '=', 'file_names.id')
-            ->orderByRaw("
-                LOWER(
-                    COALESCE(prefix, '') || ' ' || 
-                    COALESCE(file_names.name, '') || ' ' || 
-                    COALESCE(suffix, '')
+        ->leftJoin('file_names', 'files.file_name_id', '=', 'file_names.id')
+        ->orderByRaw("
+        CASE 
+            WHEN (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')) ~ '^[0-9]+\\.-' THEN 0
+            ELSE 1
+        END,
+        CASE 
+            WHEN (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')) ~ '^[0-9]+\\.-' THEN 
+                CAST(
+                    regexp_replace(
+                        (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')),
+                        '^([0-9]+)\\..*',
+                        '\\1'
+                    ) AS INTEGER
                 )
-            ")
-            ->select('files.*') // importante para evitar conflictos por join
-            ->paginate(10);
+            ELSE NULL
+        END,
+        LOWER(COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, ''))
+    ")    
+        ->select('files.*')
+        ->paginate(10);
+    
     
         return view('files.index', compact('files'));
     }    

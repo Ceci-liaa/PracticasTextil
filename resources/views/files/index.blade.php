@@ -25,8 +25,7 @@
                                     <thead class="table-dark">                                         
                                         <tr>                                             
                                             <th>ID</th>                                             
-                                            <th>Nombre</th> <!-- Toma el valor desde la tabla file_names -->                                             
-                                            <th>Tipo</th>                                             
+                                            <th>Nombre</th> <!-- Toma el valor desde la tabla file_names -->                                                                                        
                                             <th>Ubicación</th> <!-- Nueva columna -->                                             
                                             <th>Usuario</th>                                             
                                             <th>Fecha Subida</th>                                             
@@ -47,8 +46,7 @@
                                                     <a href="{{ route('files.preview', $file->id) }}" class="text-decoration-none fw-bold">
                                                         📄 {{ $file->nombre_completo ?? 'Sin nombre' }}
                                                     </a>
-                                                </td>
-                                                <td>{{ $file->type }}</td>                                                 
+                                                </td>                                             
                                                 <td><strong>{{ $file->full_path }}</strong></td>                                                
                                                 <td>{{ $file->user->name }}</td>                                                 
                                                 <td>{{ $file->created_at->format('d/m/Y H:i') }}</td> <!-- Formato de fecha -->                                                 
