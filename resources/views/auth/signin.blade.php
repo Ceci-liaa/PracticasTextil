@@ -6,7 +6,7 @@
             </div>
         </div>
     </div>
-    <main class="main-content  mt-0">
+    <main class="main-content mt-0">
         <section>
             <div class="page-header min-vh-100">
                 <div class="container">
@@ -15,7 +15,7 @@
                             <div class="card card-plain mt-8">
                                 <div class="card-header pb-0 text-left bg-transparent text-center">
                                     <h3 class="font-weight-black text-dark display-6">Bienvenido</h3>
-                                    <p class="mb-0">Create una nueva cuenta<br></p>
+                                    <p class="mb-0">Crea una nueva cuenta<br></p>
                                     <p class="mb-0">O inicia sesión con estas credenciales:</p>
                                     <p class="mb-0">Email: <b>admin@corporateui.com</b></p>
                                     <p class="mb-0">Contraseña: <b>secret</b></p>
@@ -24,14 +24,14 @@
                                 <div class="card-body">
                                     <div class="text-center">
                                         @if ($errors->any())
-                                        <div class="alert alert-danger px-3 py-2 text-sm rounded" style="max-width: 400px;">
-                                            @foreach ($errors->all() as $error)
-                                                <div>{{ $error }}</div>
-                                            @endforeach
-                                        </div>
+                                            <div class="alert alert-danger px-3 py-2 text-sm rounded" style="max-width: 400px;">
+                                                @foreach ($errors->all() as $error)
+                                                    <div>{!! $error !!}</div> <!-- Mostrar errores con HTML -->
+                                                @endforeach
+                                            </div>
                                         @endif
                                     </div>
-                                    <form role="form" class="text-start" method="POST" action="sign-in">
+                                    <form role="form" class="text-start" method="POST" action="{{ route('sign-in') }}">
                                         @csrf
                                         <label>Correo</label>
                                         <div class="mb-3">
@@ -48,8 +48,14 @@
                                                 aria-describedby="password-addon">
                                         </div>
                                         <div class="d-flex align-items-center">
+                                            <!-- Mostrar el enlace de desbloquear cuenta solo si la cuenta está bloqueada -->
+                                            @if (session('account_locked'))
+                                                <a href="{{ route('password.request') }}" class="text-xs font-weight-bold ms-1">Desbloquear cuenta</a>
+                                            @endif
+                                            
+                                            <!-- Enlace para recuperar la contraseña -->
                                             <a href="{{ route('password.request') }}"
-                                                class="text-xs font-weight-bold ms-auto">Olvidaste tu contraseña</a>
+                                                class="text-xs font-weight-bold ms-auto">Olvidaste tu contraseña?</a>
                                         </div>
                                         <div class="text-center">
                                             <button type="submit" class="btn btn-dark w-100 mt-4 mb-3">Iniciar Sesión</button>
@@ -58,7 +64,7 @@
                                 </div>
                                 <div class="card-footer text-center pt-0 px-lg-2 px-1">
                                     <p class="mb-4 text-xs mx-auto">
-                                        No tienes una cuenta?
+                                        ¿No tienes una cuenta?
                                         <a href="{{ route('sign-up') }}" class="text-dark font-weight-bold">Registrarse</a>
                                     </p>
                                 </div>
@@ -70,7 +76,7 @@
                                     style="background-image:url('../assets/img/image-sign-in.jpg')">
                                     <div
                                         class="blur mt-12 p-4 text-center border border-white border-radius-md position-absolute fixed-bottom m-4">
-                                        <h2 class="mt-3 text-dark font-weight-bold">Enter our global community of
+                                        <h2 class="mt-3 text-dark font-weight-bold">Join our global community of
                                             developers.</h2>
                                         <h6 class="text-dark text-sm mt-5">Copyright © 2022 Corporate UI Design System
                                             by Creative Tim.</h6>
@@ -83,5 +89,4 @@
             </div>
         </section>
     </main>
-
 </x-guest-layout>

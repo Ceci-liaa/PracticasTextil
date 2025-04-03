@@ -21,6 +21,10 @@ return new class extends Migration {
             $table->rememberToken(); // Token para recordar sesión
             $table->timestamps(); // Fechas de creación y actualización
 
+            // Añadir campos para bloqueo de la cuenta
+            $table->integer('failed_attempts')->default(0); // Intentos fallidos
+            $table->timestamp('locked_at')->nullable(); // Fecha de bloqueo
+
             // 🔹 Clave foránea para rol_id, enlazada a roles.id
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
         });
