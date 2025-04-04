@@ -41,10 +41,14 @@ class LoginController extends Controller
 
         // Cuenta bloqueada por intentos fallidos
         if ($user->failed_attempts >= 4) {
+            $user->status = false; // ⛔ Se vuelve inactiva automáticamente
+            $user->locked_at = now(); // (opcional) por si llevas control
+            $user->save();
+        
             return back()->withErrors([
-                'password' => 'Demasiados intentos fallidos. Tu cuenta ha sido bloqueada.',
+                'password' => 'Demasiados intentos fallidos. Tu cuenta ha sido bloqueada y ahora está inactiva.',
             ])->withInput($request->only('email'))->with('account_locked', true);
-        }
+        }        
 
         // Verificación de credenciales
         $credentials = $request->only('email', 'password');
