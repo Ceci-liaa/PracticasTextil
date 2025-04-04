@@ -11,6 +11,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\FileNameController;
 use App\Http\Controllers\FileController;
+use App\Models\User;
+use App\Http\Controllers\AuditController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,38 +92,6 @@ Route::put('/laravel-examples/user-profile/update', [ProfileController::class, '
 
 // roles
 Route::resource('roles', RoleController::class)->middleware(['auth']);
-// RUTAS NO PROTEGIDAS
-// Route::resource('roles', RoleController::class);
-
-// //User routes gestion de usuarios (Admin)
-// Route::get('/user/users-management', [UserController::class, 'index'])->name('users-management');
-// Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-// Route::put('/user/{user}/update', [UserController::class, 'update'])->name('users.update');
-
-// Route::put('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
-
-// //Folder routes
-// Route::get('/folders', [FolderController::class, 'index'])->name('folders.index'); // muestra todas las carpetas y subcarpetas disponibles
-// Route::get('/folders/create', [FolderController::class, 'create'])->name('folders.create');
-// Route::post('/folders', [FolderController::class, 'store'])->name('folders.store'); // Guarda la carpeta creada
-// Route::get('/folders/folders-management/{folder}', [FolderController::class, 'show'])->name('folders.show');
-// Route::get('/folders/{folder}/edit', [FolderController::class, 'edit'])->name('folders.edit'); // Edita la carpeta seleccionada
-// Route::put('/folders/{folder}', [FolderController::class, 'update'])->name('folders.update'); // Actualiza la carpeta seleccionada
-// Route::delete('/folders/{folder}', [FolderController::class, 'destroy'])->name('folders.destroy'); // Elimina la carpeta seleccionada
-
-// // Ruta del explorador de archivos
-// // Mostrar los archivos dentro de la carpeta seleccionada
-// Route::get('/explorer/{folder?}', [FolderController::class, 'explorer'])->name('folders.explorer');
-
-// // Ruta para los nombres de los archivos
-// // Route::resource('file_names', FileNameController::class);   //Esto creará automáticamente las rutas para listar, crear, editar, actualizar y eliminar nombres de archivos.
-
-// Route::get('/file_names', [FileNameController::class, 'index'])->name('file_names.index'); // Listar todos los nombres de archivo permitidos
-// Route::get('/file_names/create', [FileNameController::class, 'create'])->name('file_names.create'); // Mostrar el formulario para crear un nuevo nombre de archivo
-// Route::post('/file_names', [FileNameController::class, 'store'])->name('file_names.store'); // Guardar un nuevo nombre de archivo en la base de datos
-// Route::get('/file_names/{fileName}/edit', [FileNameController::class, 'edit'])->name('file_names.edit'); // Mostrar el formulario para editar un nombre de archivo existente
-// Route::put('/file_names/{fileName}', [FileNameController::class, 'update'])->name('file_names.update'); // Actualizar un nombre de archivo en la base de datos
-// Route::delete('/file_names/{fileName}', [FileNameController::class, 'destroy'])->name('file_names.destroy'); // Eliminar un nombre de archivo
 
 // Rutas protegidas: solo usuarios autenticados
 Route::middleware(['auth'])->group(function () {
@@ -173,6 +143,17 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/files/{file}', [FileController::class, 'destroy'])->name('files.destroy');
     Route::get('/files/download/{file}', [FileController::class, 'download'])->name('files.download');
 
+    // Rutas para la gestión de auditoría
+        Route::get('/audits', [AuditController::class, 'index'])->name('auditoria.index');
 });
+
+// Route::get('/probar-auditoria', function () {
+//     $user = User::first();
+//     $user->name = 'Nombre desde auditoría web ' . now()->format('H:i:s');
+//     $user->save();
+//     return 'Cambio realizado';
+// });
+
+
 
 

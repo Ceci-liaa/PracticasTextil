@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
-class FileName extends Model
+class FileName extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, AuditableTrait;
 
-    protected $table = 'file_names'; // Asegura que apunta a la tabla correcta
-
-    protected $fillable = ['name', 'activo']; // Campos que se pueden asignar masivamente
+    protected $table = 'file_names';
+    protected $fillable = ['name', 'activo'];
+    protected $auditExclude = [];
 }

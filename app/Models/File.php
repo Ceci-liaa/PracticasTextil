@@ -4,75 +4,64 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
-class File extends Model
+class File extends Model implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, AuditableTrait;
 
     protected $fillable = [
         'file_name_id',
         'prefix',
         'suffix',
         'name_original',
-        'name_stored', // ¡esto es esencial!
+        'name_stored',
         'type',
         'folder_id',
         'user_id',
     ];
-    
-    
-// File.php
+
+    protected $auditExclude = [];
+
+    // Accessors
     public function getNombreCompletoAttribute()
     {
         $parts = [];
 
-        if ($this->prefix) {
-            $parts[] = $this->prefix;
-        }
+        if ($this->prefix) $parts[] = $this->prefix;
+        if ($this->file_name) $parts[] = $this->file_name->name;
+        if ($this->suffix) $parts[] = $this->suffix;
 
-        if ($this->file_name) {
-            $parts[] = $this->file_name->name;
-        }
-
-        if ($this->suffix) {
-            $parts[] = $this->suffix;
-        }
-
-        $nombreSinExtension = implode(' ', $parts);
-
-        return $nombreSinExtension . '.' . strtolower($this->type);
-    }
-
-
-    // Relaciones
-    public function file_name()
-    {
-        return $this->belongsTo(FileName::class, 'file_name_id'); // Verifica que la clave foránea sea la correcta
-    }
-
-    public function folder()
-    {
-        return $this->belongsTo(Folder::class, 'folder_id');
-    }
-    
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+        return implode(' ', $parts) . '.' . strtolower($this->type);
     }
 
     public function getFullPathAttribute()
     {
         $folder = $this->folder;
         $path = [];
-    
+
         while ($folder) {
-            array_unshift($path, $folder->name); // Agregar al inicio del array
+            array_unshift($path, $folder->name);
             $folder = $folder->parent;
         }
-    
-        // Si el archivo está en una carpeta padre, mostrar solo su nombre
+
         return count($path) === 1 ? $path[0] : implode('\\', $path);
     }
-       
 
+    // Relaciones
+    public function file_name()
+    {
+        return $this->belongsTo(FileName::class, 'file_name_id');
+    }
+
+    public function folder()
+    {
+        return $this->belongsTo(Folder::class, 'folder_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
