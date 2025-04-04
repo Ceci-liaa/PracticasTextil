@@ -119,7 +119,7 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>
                                                         <a href="{{ route('files.preview', $file->id) }}" class="text-decoration-none fw-bold">
-                                                            📄 {{ $file->nombre_completo ?? 'Sin nombre' }}
+                                                            📄 {{ $file->nombre_completo }}
                                                         </a>
                                                     </td>
                                                     <td>{{ $file->user->name }}</td>

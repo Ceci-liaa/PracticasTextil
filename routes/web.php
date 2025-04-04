@@ -53,7 +53,6 @@ Route::resource('roles', RoleController::class)->middleware(['auth']);
 
 // Rutas protegidas: solo usuarios autenticados
 // Route::middleware(['auth'])->group(function () {
-
 //     // Gestión de usuarios (Admin)
 //     Route::get('/user/users-management', [UserController::class, 'index'])->name('users-management');
 //     Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
@@ -95,13 +94,13 @@ Route::resource('roles', RoleController::class)->middleware(['auth']);
 //     // Rutas para la gestión de auditoría
 //     Route::get('/audits', [AuditController::class, 'index'])->name('auditoria.index');
 // });
-
 Route::middleware(['auth', 'role.status:Administrador'])->group(function () {
     // Gestión de usuarios (Admin)
     Route::get('/user/users-management', [UserController::class, 'index'])->name('users-management');
     Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/user/{user}/update', [UserController::class, 'update'])->name('users.update');
     Route::put('/user/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+
     // Gestión de Carpetas
     Route::get('/folders', [FolderController::class, 'index'])->name('folders.index');
     Route::get('/folders/create', [FolderController::class, 'create'])->name('folders.create');
@@ -109,15 +108,7 @@ Route::middleware(['auth', 'role.status:Administrador'])->group(function () {
     Route::get('/folders/{folder}/edit', [FolderController::class, 'edit'])->name('folders.edit');
     Route::put('/folders/{folder}', [FolderController::class, 'update'])->name('folders.update');
     Route::delete('/folders/{folder}', [FolderController::class, 'destroy'])->name('folders.destroy');
-    Route::get('/folders/subfolders', [FolderController::class, 'getSubfolders']);
-    Route::get('/folders/{folder}/children', function ($folderId) {$parentId = $folderId == 0 ? null : $folderId;
-    return \App\Models\Folder::where('parent_id', $parentId)->select('id', 'name')->get();});
-    Route::get('/explorer/suggestions', [FolderController::class, 'searchSuggestions'])->name('folders.suggestions');
-    Route::get('/files/{id}/preview', [FileController::class, 'preview'])->name('files.preview');
-    // Explorador de carpetas
-    Route::get('/folders/{folder}', [FolderController::class, 'show'])->name('folders.show');
-    // Route::get('/explorer', [FolderController::class, 'explorer'])->name('folders.explorer');
-    Route::get('/explorer/{id?}', [FolderController::class, 'explorer'])->name('folders.explorer');
+
     // Gestión de nombres de archivos
     Route::get('/file_names', [FileNameController::class, 'index'])->name('file_names.index');
     Route::get('/file_names/create', [FileNameController::class, 'create'])->name('file_names.create');
@@ -126,8 +117,25 @@ Route::middleware(['auth', 'role.status:Administrador'])->group(function () {
     Route::put('/file_names/{fileName}', [FileNameController::class, 'update'])->name('file_names.update');
     Route::patch('/file-names/{id}/deactivate', [FileNameController::class, 'deactivate'])->name('file-names.deactivate');
     Route::patch('/file-names/{id}/activate', [FileNameController::class, 'activate'])->name('file-names.activate');
+    
     // Gestión de Archivos
     Route::get('/files', [FileController::class, 'index'])->name('files.index');
+});
+
+Route::middleware(['auth', 'role.status:Administrador,Usuario'])->group(function () {
+
+    // Explorador de carpetas
+    Route::get('/explorer/{id?}', [FolderController::class, 'explorer'])->name('folders.explorer');
+    Route::get('/folders/{folder}', [FolderController::class, 'show'])->name('folders.show');
+
+    Route::get('/folders/subfolders', [FolderController::class, 'getSubfolders']);
+    Route::get('/folders/{folder}/children', function ($folderId) {$parentId = $folderId == 0 ? null : $folderId;
+    return \App\Models\Folder::where('parent_id', $parentId)->select('id', 'name')->get();});
+    Route::get('/explorer/suggestions', [FolderController::class, 'searchSuggestions'])->name('folders.suggestions');
+    Route::get('/files/{id}/preview', [FileController::class, 'preview'])->name('files.preview');
+
+    // Route::get('/explorer', [FolderController::class, 'explorer'])->name('folders.explorer');
+
     Route::get('/files/create', [FileController::class, 'create'])->name('files.create');
     Route::post('/files', [FileController::class, 'store'])->name('files.store');
     Route::get('/files/{file}', [FileController::class, 'show'])->name('files.show');
@@ -137,30 +145,9 @@ Route::middleware(['auth', 'role.status:Administrador'])->group(function () {
     Route::get('/files/download/{file}', [FileController::class, 'download'])->name('files.download');
 });
 
-Route::middleware(['auth', 'role.status:Usuario'])->group(function () {
-    // Perfil
-    Route::get('/laravel-examples/user-profile', [ProfileController::class, 'index'])->name('users.profile');
-    Route::put('/laravel-examples/user-profile/update', [ProfileController::class, 'update'])->name('users.profile.update');
-
-    // Explorador
-    Route::get('/explorer/{id?}', [FolderController::class, 'explorer'])->name('folders.explorer');
-    Route::get('/folders/{folder}', [FolderController::class, 'show'])->name('folders.show');
-    Route::get('/explorer/suggestions', [FolderController::class, 'searchSuggestions'])->name('folders.suggestions');
-
-    // Archivos
-    Route::resource('/files', FileController::class)->except(['edit', 'update']);
-    Route::get('/files/{file}/edit', [FileController::class, 'edit'])->name('files.edit');
-    Route::put('/files/{file}', [FileController::class, 'update'])->name('files.update');
-    Route::get('/files/download/{file}', [FileController::class, 'download'])->name('files.download');
-    Route::get('/files/{id}/preview', [FileController::class, 'preview'])->name('files.preview');
-});
-
 Route::middleware(['auth', 'role.status:Auditor'])->group(function () {
     Route::get('/audits', [AuditController::class, 'index'])->name('auditoria.index');
 });
-
-
-
 // Route::get('/probar-auditoria', function () {
 //     $user = User::first();
 //     $user->name = 'Nombre desde auditoría web ' . now()->format('H:i:s');

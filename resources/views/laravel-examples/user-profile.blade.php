@@ -4,7 +4,6 @@
         <div class="top-0 bg-cover z-index-n1 min-height-100 max-height-200 h-25 position-absolute w-100 start-0 end-0"
             style="background-image: url('../../../assets/img/header-blue-purple.jpg'); background-position: bottom;">
         </div>
-
         <x-app.navbar />
         
         <div class="px-5 py-4 container-fluid">
@@ -32,7 +31,7 @@
                                             {{ auth()->user()->name }}
                                         </h5>
                                         <p class="mb-0 font-weight-bold text-sm">
-                                            {{ auth()->user()->userRole->name ?? 'Sin Rol' }}
+                                            {{ auth()->user()->getRoleNames()->first() ?? 'Sin Rol' }}
                                         </p>
                                     </div>
                                 </div>

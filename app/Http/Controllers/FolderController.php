@@ -29,14 +29,6 @@ class FolderController extends Controller
         return view('folders.folders-management', compact('folders'));
     }        
 
-    // Muestra los archivos dentro de la carpeta seleccionada.
-    // public function show(Folder $folder)
-    // {
-    //     // Cargar relaciones de subcarpetas y archivos
-    //     $folder->load(['subfolders', 'files']);
-    
-    //     return view('folders.show-folder', compact('folder'));
-    // }    
     public function show(Folder $folder)
     {
         $subfolders = Folder::where('parent_id', $folder->id)
@@ -56,11 +48,26 @@ class FolderController extends Controller
             $folder->load(['files' => function ($query) {
                 $query->with('file_name')
                     ->leftJoin('file_names', 'files.file_name_id', '=', 'file_names.id')
-                    ->orderByRaw(" -- (pega aquí el orderByRaw completo) ")
+                    ->orderByRaw("
+                    CASE 
+                        WHEN (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')) ~ '^[0-9]+\\.-' THEN 0
+                        ELSE 1
+                    END,
+                    CASE 
+                        WHEN (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')) ~ '^[0-9]+\\.-' THEN 
+                            CAST(
+                                regexp_replace(
+                                    (COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, '')),
+                                    '^([0-9]+)\\..*',
+                                    '\\1'
+                                ) AS INTEGER
+                            )
+                        ELSE NULL
+                    END,
+                    LOWER(COALESCE(prefix, '') || ' ' || COALESCE(file_names.name, '') || ' ' || COALESCE(suffix, ''))
+                ")                
                     ->select('files.*');
             }]);
-                       
-    
         return view('folders.show-folder', compact('folder', 'subfolders'));
     }    
 
@@ -185,10 +192,18 @@ class FolderController extends Controller
             return redirect()->route('folders.explorer')->with('error', 'Carpeta no encontrada.');
         }
     
-        $folderIds = [$id];
-        if ($search && $id !== null) {
-            $folderIds = array_merge($folderIds, $this->getAllDescendantFolderIds($id));
-        }
+        $folderIds = [];
+
+        if ($search) {
+            // Si hay búsqueda, buscar en todas las carpetas
+            $folderIds = Folder::pluck('id')->toArray();
+        } elseif ($id !== null) {
+            // Si se accedió a una carpeta específica (sin búsqueda), incluir sus hijas
+            $folderIds = array_merge([$id], $this->getAllDescendantFolderIds($id));
+        } else {
+            // Sin carpeta seleccionada ni búsqueda, mostrar solo raíz
+            $folderIds = [null];
+        }        
     
         // Carpetas hijas inmediatas o por búsqueda
         $querySubfolders = Folder::where('parent_id', $id);
