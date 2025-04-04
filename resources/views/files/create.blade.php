@@ -45,7 +45,23 @@
                                 @csrf
                                 <!-- 🔹 Input oculto para indicar desde dónde se sube el archivo -->
                                 <input type="hidden" name="from" value="{{ request('from') }}">
+                                {{-- Selección de Carpeta --}}
+                                <div class="mb-3 form-group">
+                                    <label class="form-label">Seleccionar Carpeta:</label>
+                                    <input type="hidden" name="folder_id" value="{{ $currentFolderId }}">
 
+                                    <ul class="folder-list">
+                                        @foreach ($folders as $folder)
+                                            <li class="folder-item">
+                                                <a href="{{ route('files.create', ['folder_id' => $folder->id, 'from' => request('from')]) }}"
+                                                class="folder-link">
+                                                    📁 {{ $folder->name }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                
                                 {{-- Input: Nombre Predefinido --}}
                                 <div class="mb-3 form-group">
                                     <label class="form-label">Nombre predefinido:</label>
@@ -63,22 +79,6 @@
                                         <label class="form-label">Sufijo (opcional):</label>
                                         <input type="text" name="suffix" class="form-control" placeholder="Ej: MLAB123">
                                     </div>
-                                </div>
-                                {{-- Selección de Carpeta --}}
-                                <div class="mb-3 form-group">
-                                    <label class="form-label">Seleccionar Carpeta:</label>
-                                    <input type="hidden" name="folder_id" value="{{ $currentFolderId }}">
-
-                                    <ul class="folder-list">
-                                        @foreach ($folders as $folder)
-                                            <li class="folder-item">
-                                                <a href="{{ route('files.create', ['folder_id' => $folder->id, 'from' => request('from')]) }}"
-                                                class="folder-link">
-                                                    📁 {{ $folder->name }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
                                 </div>
 
                                 {{-- Input: Archivo --}}

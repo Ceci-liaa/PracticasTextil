@@ -82,9 +82,9 @@
                     </div>                 
                 </div>             
             </div>         
-        </div>          
-        </main>      
+        </div>           
     <x-app.footer />     
+</main>     
 
     <!-- ✅ Script para ocultar el mensaje después de 5 segundos -->     
     <script>         
