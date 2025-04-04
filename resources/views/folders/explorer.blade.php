@@ -320,7 +320,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
-<script>
+<!-- <script>
 $(function() {
     $('input[name="search"]').autocomplete({
         source: function(request, response) {
@@ -333,6 +333,31 @@ $(function() {
             });
         },
         minLength: 1, // ✅ Ahora permite búsquedas desde 1 carácter
+        select: function(event, ui) {
+            if (ui.item.url) {
+                window.location.href = ui.item.url;
+            }
+        }
+    });
+});
+</script> -->
+<script>
+$(function() {
+    $('input[name="search"]').autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "{{ route('folders.suggestions') }}",
+                data: { term: request.term },
+                success: function(data) {
+                    console.log("📦 Resultados recibidos:", data); // ← Aquí verás en la consola qué llega desde el backend
+                    response(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error("❌ Error en la búsqueda:", error); // ← También logea si hay error
+                }
+            });
+        },
+        minLength: 1,
         select: function(event, ui) {
             if (ui.item.url) {
                 window.location.href = ui.item.url;

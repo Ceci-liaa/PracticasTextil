@@ -125,13 +125,15 @@ Route::middleware(['auth', 'role.status:Administrador'])->group(function () {
 Route::middleware(['auth', 'role.status:Administrador,Usuario'])->group(function () {
 
     // Explorador de carpetas
+    // ✅ PRIMERO la ruta específica de sugerencias
+    Route::get('/explorer/suggestions', [FolderController::class, 'searchSuggestions'])->name('folders.suggestions');
+    // ✅ LUEGO la ruta general del explorador
     Route::get('/explorer/{id?}', [FolderController::class, 'explorer'])->name('folders.explorer');
-    Route::get('/folders/{folder}', [FolderController::class, 'show'])->name('folders.show');
 
+    Route::get('/folders/{folder}', [FolderController::class, 'show'])->name('folders.show');
     Route::get('/folders/subfolders', [FolderController::class, 'getSubfolders']);
     Route::get('/folders/{folder}/children', function ($folderId) {$parentId = $folderId == 0 ? null : $folderId;
     return \App\Models\Folder::where('parent_id', $parentId)->select('id', 'name')->get();});
-    Route::get('/explorer/suggestions', [FolderController::class, 'searchSuggestions'])->name('folders.suggestions');
     Route::get('/files/{id}/preview', [FileController::class, 'preview'])->name('files.preview');
 
     // Route::get('/explorer', [FolderController::class, 'explorer'])->name('folders.explorer');
