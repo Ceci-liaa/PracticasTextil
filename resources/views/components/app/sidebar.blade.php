@@ -236,3 +236,27 @@
     </div>
     <!---->
 </aside>
+
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #sidenav-main {
+    height: 100vh;              /* Sidebar ocupa toda la ventana */
+    overflow: hidden;           /* Oculta scroll principal, lo controlamos dentro */
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  #sidenav-main .navbar-collapse {
+    height: calc(100vh - 80px); /* Ajusta si tu cabecera cambia */
+    overflow-y: auto;           /* Scroll vertical */
+    overflow-x: hidden;
+    position: relative;         /* Necesario si usas PerfectScrollbar */
+  }
+</style>
+
