@@ -31,9 +31,7 @@ class RegisterController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
-
             'name' => 'required|min:3|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:7|max:255',
@@ -49,12 +47,11 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'status' => false, // 👈 Inactivo al registrarse
         ]);
 
+        // 🚫 No lo logueamos automáticamente
+        // Auth::login($user);
 
-        Auth::login($user);
-
-
-        return redirect(RouteServiceProvider::HOME);
-    }
+        return redirect()->route('sign-in')->with('success', 'Registro exitoso. Tu cuenta será activada por un administrador.');    }
 }

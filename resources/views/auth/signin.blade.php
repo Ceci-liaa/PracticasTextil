@@ -22,6 +22,11 @@
                                 </div>
 
                                 <div class="card-body">
+                                    @if (session('success'))
+                                        <div class="alert alert-success px-3 py-2 text-sm rounded mb-3" style="max-width: 400px;">
+                                            {{ session('success') }}
+                                        </div>
+                                    @endif
                                     <div class="text-center">
                                         @if ($errors->any())
                                             <div class="alert alert-danger px-3 py-2 text-sm rounded" style="max-width: 400px;">

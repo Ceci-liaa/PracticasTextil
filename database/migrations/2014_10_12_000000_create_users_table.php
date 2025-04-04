@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('location')->nullable(); // Ubicación
             $table->text('about')->nullable(); // Descripción personal
             $table->unsignedBigInteger('role_id')->nullable(); // Relación con la tabla roles
-            $table->boolean('status')->default(true); // Estado del usuario (activo/inactivo)
+            $table->boolean('status')->default(false); // Estado del usuario (activo/inactivo)
             $table->rememberToken(); // Token para recordar sesión
             $table->timestamps(); // Fechas de creación y actualización
 
