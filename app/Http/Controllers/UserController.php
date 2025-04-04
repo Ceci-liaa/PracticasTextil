@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('userRole')->get(); // Cargamos el rol del usuario correctamente
+        $users = User::all(); // Cargamos el rol del usuario correctamente
         return view('user.users-management', compact('users'));
     }
 

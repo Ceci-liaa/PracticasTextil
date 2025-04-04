@@ -11,7 +11,7 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run(): void
     {
         // Definir Roles iniciales
-        $roles = ['Administrador', 'Coordinador', 'Usuario'];
+        $roles = ['Administrador', 'Auditor', 'Usuario'];
 
         foreach ($roles as $roleName) {
             Role::firstOrCreate(['name' => $roleName]);
@@ -34,10 +34,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'editar formato',
             'eliminar formato',
             'ver formato',
-            'crear rol',
-            'editar rol',
-            'eliminar rol',
-            'ver rol',
+            'ver auditoria',
         ];
 
         foreach ($permissions as $permiso) {
@@ -48,12 +45,13 @@ class RolesAndPermissionsSeeder extends Seeder
         $adminRole = Role::findByName('Administrador');
         $adminRole->syncPermissions($permissions);
 
-        // Asignar permisos al rol Editor (solo algunos permisos)
-        $coordinadorRole = Role::findByName('Coordinador');
-        $coordinadorRole->syncPermissions(['subir archivo', 'editar archivo', 'eliminar archivo','ver archivo','ver archivo', 'ver formato']);
-
-        // Al rol Usuario sólo asignarle ver articulos
+        // Asignar permisos al rol Usuario
+        // Se le asignan permisos específicos al rol Usuario
         $userRole = Role::findByName('Usuario');
         $userRole->syncPermissions(['subir archivo', 'editar archivo', 'eliminar archivo','ver archivo','ver archivo', 'ver formato']);
+
+        // Al rol Auditor se le asigna solo el permiso de ver auditoria
+        $auditorRole = Role::findByName('Auditor');
+        $auditorRole->syncPermissions(['ver auditoria']);
     }
 }
