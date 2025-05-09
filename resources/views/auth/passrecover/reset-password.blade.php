@@ -14,7 +14,7 @@
                         <div class="col-xl-4 col-md-6 d-flex flex-column mx-auto">
                             <div class="card card-plain mt-8">
                                 <div class="card-header pb-0 text-left bg-transparent">
-                                    <h3 class="font-weight-black text-dark display-6 text-center">Reset Password</h3>
+                                    <h3 class="font-weight-black text-dark display-6 text-center">Resetear Contraseña</h3>
                                 </div>
                                 <div class="card-body text-center">
                                     @if ($errors->any())
@@ -43,17 +43,17 @@
                                         </div>
                                         <div class="mb-3">
                                             <input type="password" id="password" class="form-control" name="password"
-                                                placeholder="Enter your password" aria-label="Password" id="password"
+                                                placeholder="Ingresar tu contraseña" aria-label="Password" id="password"
                                                 name="password"required>
                                         </div>
                                         <div class="mb-3">
                                             <input type="password" id="password_confirmation" class="form-control"
-                                                name="password_confirmation" placeholder="Confirm your password"
+                                                name="password_confirmation" placeholder="Confirmar la contraseña"
                                                 aria-label="Password" id="password_confirmation"
                                                 name="password_confirmation" required>
                                             <div class="text-center">
                                                 <button type="submit"
-                                                    class="my-4 mb-2 btn btn-dark btn-lg w-100">Send</button>
+                                                    class="my-4 mb-2 btn btn-dark btn-lg w-100">Enviar</button>
                                             </div>
                                     </form>
                                 </div>

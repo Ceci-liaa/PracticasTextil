@@ -4,7 +4,7 @@
             aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand d-flex align-items-center m-0"
             href=" https://demos.creative-tim.com/corporate-ui-dashboard/pages/dashboard.html " target="_blank">
-            <span class="font-weight-bold text-lg">Corporate UI</span>
+            <span class="font-weight-bold text-lg">Ingeniería Textil</span>
         </a>
     </div>
     <div class="collapse navbar-collapse px-4  w-auto " id="sidenav-collapse-main">
@@ -16,7 +16,7 @@
                         class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
                         <svg width="30px" height="30px" viewBox="0 0 48 48" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>dashboard</title>
+                            <title>Dashboard</title>
                             <g id="dashboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                 <g id="template" transform="translate(12.000000, 12.000000)" fill="#FFFFFF"
                                     fill-rule="nonzero">
@@ -36,13 +36,13 @@
                     <span class="nav-link-text ms-1">Dashboard</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link  {{ is_current_route('tables') ? 'active' : '' }}" href="{{ route('tables') }}">
                     <div
                         class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
                         <svg width="30px" height="30px" viewBox="0 0 48 48" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>table</title>
+                            <title>Table</title>
                             <g id="table" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                 <g id="view-grid" transform="translate(12.000000, 12.000000)" fill="#FFFFFF"
                                     fill-rule="nonzero">
@@ -64,8 +64,8 @@
                     </div>
                     <span class="nav-link-text ms-1">Tables</span>
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
                 <a class="nav-link {{ is_current_route('wallet') ? 'active' : '' }} " href="{{ route('wallet') }}">
                     <div
                         class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
@@ -86,8 +86,8 @@
                     </div>
                     <span class="nav-link-text ms-1">Wallet</span>
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
                 <a class="nav-link  {{ is_current_route('RTL') ? 'active' : '' }}" href="{{ route('RTL') }}">
                     <div
                         class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
@@ -111,7 +111,8 @@
                     </div>
                     <span class="nav-link-text ms-1">RTL</span>
                 </a>
-            </li>
+            </li> -->
+            @role('Administrador')
             <li class="nav-item mt-2">
                 <div class="d-flex align-items-center nav-link">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="ms-2"
@@ -120,21 +121,39 @@
                             d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
                             clip-rule="evenodd" />
                     </svg>
-                    <span class="font-weight-normal text-md ms-2">Laravel Examples</span>
+                    <span class="font-weight-normal text-md ms-2">Panel Administrador</span>
                 </div>
             </li>
-            <li class="nav-item border-start my-0 pt-2">
-                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('users.profile') ? 'active' : '' }}"
-                    href="{{ route('users.profile') }}">
-                    <span class="nav-link-text ms-1">User Profile</span>
-                </a>
-            </li>
+            
             <li class="nav-item border-start my-0 pt-2">
                 <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('users-management') ? 'active' : '' }}"
                     href="{{ route('users-management') }}">
-                    <span class="nav-link-text ms-1">User Management</span>
+                    <span class="nav-link-text ms-1">Gestión Usuarios</span>
                 </a>
             </li>
+
+            <li class="nav-item border-start my-0 pt-2">
+                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('folders.index') ? 'active' : '' }}"
+                    href="{{ route('folders.index') }}">
+                    <span class="nav-link-text ms-1">Gestión Carpetas</span>
+                </a>
+            </li>
+
+            <li class="nav-item border-start my-0 pt-2">
+                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('file_names.index') ? 'active' : '' }}"
+                    href="{{ route('file_names.index') }}">
+                    <span class="nav-link-text ms-1">Gestión Nombres Archivos</span>
+                </a>
+            </li>
+
+            <li class="nav-item border-start my-0 pt-2">
+                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('files.index') ? 'active' : '' }}"
+                    href="{{ route('files.index') }}">
+                    <span class="nav-link-text ms-1">Gestión Archivos</span>
+                </a>
+            </li>
+            @endrole
+            @hasanyrole('Administrador|Usuario')
             <li class="nav-item mt-2">
                 <div class="d-flex align-items-center nav-link">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="ms-2"
@@ -143,54 +162,101 @@
                             d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
                             clip-rule="evenodd" />
                     </svg>
-                    <span class="font-weight-normal text-md ms-2">Account Pages</span>
+                    <span class="font-weight-normal text-md ms-2">Gestor Documentos</span>
                 </div>
             </li>
+
+            <!-- Nuevo para ver como explorador de archivos  -->
             <li class="nav-item border-start my-0 pt-2">
-                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('profile') ? 'active' : '' }}"
-                    href="{{ route('profile') }}">
-                    <span class="nav-link-text ms-1">Profile</span>
+                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ request()->routeIs('folders.explorer') ? 'active' : '' }}"
+                    href="{{ route('folders.explorer') }}">
+                    <span class="nav-link-text ms-1">Explorador de Archivos</span>
                 </a>
             </li>
+            @endhasanyrole
+            
+            @hasanyrole('Administrador|Usuario|Auditor')
+                        <!-- Nuevo para el perfil del Usuario-->
+                        <li class="nav-item mt-2">
+                <div class="d-flex align-items-center nav-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="ms-2"
+                        viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd"
+                            d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-weight-normal text-md ms-2">Panel Usuario</span>
+                </div>
+            </li>
+            
+            <!-- Perfil del usuario  -->
+            <li class="nav-item border-start my-0 pt-2">
+                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('users.profile') ? 'active' : '' }}"
+                    href="{{ route('users.profile') }}">
+                    <span class="nav-link-text ms-1">Perfil de Usuario</span>
+                </a>
+            </li>
+            @endhasanyrole
+
+            @role('Auditor')            
+            <!-- Nuevo para la auditoria -->
+            <li class="nav-item mt-2">
+                <div class="d-flex align-items-center nav-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="ms-2"
+                        viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-weight-normal text-md ms-2">Panel Auditoría</span>
+                </div>
+            </li>
+
+            <li class="nav-item border-start my-0 pt-2">
+                <a class="nav-link position-relative ms-0 ps-2 py-2 {{ request()->routeIs('auditoria.index') ? 'active' : '' }}"
+                    href="{{ route('auditoria.index') }}">
+                    <span class="nav-link-text ms-1">Auditoría</span>
+                </a>
+            </li>
+            @endrole
+<!-- 
             <li class="nav-item border-start my-0 pt-2">
                 <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('signin') ? 'active' : '' }}"
                     href="{{ route('signin') }}">
-                    <span class="nav-link-text ms-1">Sign In</span>
+                    <span class="nav-link-text ms-1">Iniciar Sesión</span>
                 </a>
             </li>
             <li class="nav-item border-start my-0 pt-2">
                 <a class="nav-link position-relative ms-0 ps-2 py-2 {{ is_current_route('signup') ? 'active' : '' }}"
                     href="{{ route('signup') }}">
-                    <span class="nav-link-text ms-1">Sign Up</span>
+                    <span class="nav-link-text ms-1">Registrate</span>
                 </a>
-            </li>
+            </li> -->
         </ul>
     </div>
-    <div class="sidenav-footer mx-4 ">
-        <a class="btn bg-gradient-primary inline-block px-5 py-3 mx-auto text-xs align-middle transition-all ease-in border-0 rounded-lg select-none" href="https://www.creative-tim.com/product/corporate-ui-dashboard-pro-laravel" target="_blank">
-            UPGRADE TO PRO
-        </a>
-        <div class="card border-radius-md" id="sidenavCard">
-            <div class="card-body  text-start  p-3 w-100">
-                <div class="mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="text-primary"
-                        viewBox="0 0 24 24" fill="currentColor" id="sidenavCardIcon">
-                        <path
-                            d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
-                        <path
-                            d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
-                    </svg>
-                </div>
-                <div class="docs-info">
-                    <h6 class="font-weight-bold up mb-2">Need help?</h6>
-                    <p class="text-sm font-weight-normal">Please check our docs.</p>
-                    <a href="https://www.creative-tim.com/learning-lab/bootstrap/installation-guide/corporate-ui-dashboard"
-                        target="_blank" class="font-weight-bold text-sm mb-0 icon-move-right mt-auto w-100 mb-0">
-                        Documentation
-                        <i class="fas fa-arrow-right-long text-sm ms-1" aria-hidden="true"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!---->
 </aside>
+
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #sidenav-main {
+    height: 100vh;              /* Sidebar ocupa toda la ventana */
+    overflow: hidden;           /* Oculta scroll principal, lo controlamos dentro */
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  #sidenav-main .navbar-collapse {
+    height: calc(100vh - 80px); /* Ajusta si tu cabecera cambia */
+    overflow-y: auto;           /* Scroll vertical */
+    overflow-x: hidden;
+    position: relative;         /* Necesario si usas PerfectScrollbar */
+  }
+</style>
+

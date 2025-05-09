@@ -14,8 +14,8 @@
                         <div class="col-xl-4 col-md-6 d-flex flex-column mx-auto">
                             <div class="card card-plain mt-8">
                                 <div class="card-header pb-0 text-left bg-transparent">
-                                    <h3 class="font-weight-black text-dark display-6 text-center">Forgot password?</h3>
-                                    <p class="mb-0 text-center">Enter your email below!</p>
+                                    <h3 class="font-weight-black text-dark display-6 text-center">Olvidaste tu Contraseña?</h3>
+                                    <p class="mb-0 text-center">Ingresa tu correo electrónico a continuación</p>
                                 </div>
                                 @if ($errors->any())
                                     <div class="alert alert-danger text-sm" role="alert">
@@ -43,8 +43,7 @@
                                                 value="{{ old('email') }}" required autofocus>
                                         </div>
                                         <div class="text-center">
-                                            <button type="submit" class="my-4 mb-2 btn btn-dark btn-lg w-100">Email
-                                                password reset link</button>
+                                            <button type="submit" class="my-4 mb-2 btn btn-dark btn-lg w-100">Enlace de recuperación</button>
                                         </div>
                                     </form>
                                 </div>

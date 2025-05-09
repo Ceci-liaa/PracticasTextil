@@ -15,8 +15,8 @@
                         <div class="col-xl-4 col-md-6 d-flex flex-column mx-auto">
                             <div class="card card-plain mt-8">
                                 <div class="card-header pb-0 text-left bg-transparent">
-                                    <h3 class="font-weight-black text-dark display-6">Welcome back</h3>
-                                    <p class="mb-0">Welcome back! Please enter your details.</p>
+                                    <h3 class="font-weight-black text-dark display-6">Bienvenido</h3>
+                                    <p class="mb-0">Bienvenido de vuelta! Por favor ingresa tus credenciales.</p>
                                 </div>
                                 <div class="card-body">
                                     <form role="form">
