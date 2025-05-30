@@ -16,9 +16,9 @@
                                 <div class="card-header pb-0 text-left bg-transparent text-center">
                                     <h3 class="font-weight-black text-dark display-6">Bienvenido</h3>
                                     <p class="mb-0">Crea una nueva cuenta<br></p>
-                                    <p class="mb-0">O inicia sesión con estas credenciales:</p>
-                                    <p class="mb-0">Email: <b>admin@corporateui.com</b></p>
-                                    <p class="mb-0">Contraseña: <b>secret</b></p>
+                                    <p class="mb-0">O inicia sesión con tus credenciales</p>
+                                    <!--                                     <p class="mb-0">Email: <b>admin@corporateui.com</b></p>
+                                    <p class="mb-0">Contraseña: <b>secret</b></p> -->
                                 </div>
 
                                 <div class="card-body">
@@ -87,19 +87,18 @@
                         <div class="col-md-6">
                             <div class="position-absolute w-40 top-0 end-0 h-100 d-md-block d-none">
                                 <div class="oblique-image position-absolute fixed-top ms-auto h-100 z-index-0 bg-cover ms-n8"
-                                    style="background-image:url('../assets/img/image-sign-in.jpg')">
+                                    style="background: url('../assets/img/iniciarsesion.jpg') center center / cover no-repeat;">
                                     <div
-                                        class="blur mt-12 p-4 text-center border border-white border-radius-md position-absolute fixed-bottom m-4">
-                                        <h2 class="mt-3 text-dark font-weight-bold">Join our global community of
-                                            developers.</h2>
-                                        <h6 class="text-dark text-sm mt-5">Copyright © 2022 Corporate UI Design System
-                                            by Creative Tim.</h6>
-                                    </div>
+                                    class="blur mt-12 p-4 text-center border border-white border-radius-md position-absolute fixed-bottom m-4">
+                                    <h2 class="mt-3 text-dark font-weight-bold">Laboratorio de Calidad Textil</h2>
+                                    <!--                                         <h6 class="text-dark text-sm mt-5">Copyright © 2022 Corporate UI Design System
+                                            by Creative Tim.</h6> -->
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </section>
     </main>
