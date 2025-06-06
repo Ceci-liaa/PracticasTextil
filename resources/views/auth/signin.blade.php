@@ -42,7 +42,7 @@
                                         <div class="mb-3 position-relative">
                                             <input type="email" id="email-login" name="email" class="form-control pe-5"
                                                 placeholder="Ingresar correo"
-                                                value="{{ old('email') ? old('email') : 'admin@corporateui.com' }}"
+                                                value="{{ old('email') }}"
                                                 aria-label="Email" aria-describedby="email-addon">
 
                                             <div id="tooltip-email-login" class="tooltip-box card p-2 shadow-sm bg-white text-sm text-danger position-absolute">
@@ -53,7 +53,7 @@
                                         <label>Contraseña</label>
                                         <div class="mb-3 position-relative">
                                             <input type="password" id="password" name="password"
-                                                value="{{ old('password') ? old('password') : 'secret' }}"
+                                                value=""
                                                 class="form-control pe-5" placeholder="Ingresar Contraseña" aria-label="Password">
 
                                             <span class="position-absolute end-0 top-50 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePasswordLogin()">
@@ -89,16 +89,16 @@
                                 <div class="oblique-image position-absolute fixed-top ms-auto h-100 z-index-0 bg-cover ms-n8"
                                     style="background: url('../assets/img/iniciarsesion.jpg') center center / cover no-repeat;">
                                     <div
-                                    class="blur mt-12 p-4 text-center border border-white border-radius-md position-absolute fixed-bottom m-4">
-                                    <h2 class="mt-3 text-dark font-weight-bold">Laboratorio de Calidad Textil</h2>
-                                    <!--                                         <h6 class="text-dark text-sm mt-5">Copyright © 2022 Corporate UI Design System
+                                        class="blur mt-12 p-4 text-center border border-white border-radius-md position-absolute fixed-bottom m-4">
+                                        <h2 class="mt-3 text-dark font-weight-bold">Laboratorio de Calidad Textil</h2>
+                                        <!--                                         <h6 class="text-dark text-sm mt-5">Copyright © 2022 Corporate UI Design System
                                             by Creative Tim.</h6> -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             </div>
         </section>
     </main>
