@@ -11,20 +11,19 @@
 
                     <div class="card">
 
-                    
-                    <!-- ✅ Mensajes de error y éxito -->
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
-                            {{ session('error') }}
-                        </div>
-                    @endif
+                        <!-- ✅ Mensajes de error y éxito -->
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show fade-message" role="alert">
+                                {{ session('error') }}
+                            </div>
+                        @endif
 
-                    @if (session('success'))
-                        <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    
+                        @if (session('success'))
+                            <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
                         <div class="card-body">
                             <form action="{{ route('folders.update', $folder->id) }}" method="POST">
                                 @csrf
@@ -36,7 +35,7 @@
                                         <input type="text" name="name" class="form-control" value="{{ $folder->name }}" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>Nueva ubicación </label>
+                                        <label>Nueva ubicación</label>
                                         <div class="border rounded p-2" style="max-height: 300px; overflow-y: auto;">
                                             <input type="hidden" name="parent_id" id="parent_id" value="{{ $folder->parent_id }}">
                                             <div><strong>Ruta actual:</strong> {{ $folder->getFullPathAttribute() }}</div>
@@ -59,19 +58,24 @@
                                             </ul>
                                         </div>
                                     </div>
-
                                 </div>
-                                <button type="submit" class="btn btn-primary mt-4">Actualizar Carpeta</button>
+
+                                <!-- Contenedor flex para alinear los botones -->
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="submit" class="btn btn-primary">Actualizar Carpeta</button>
+                                    <!-- Botón Cancelar alineado a la derecha -->
+                                    <a href="{{ route('folders.index') }}" class="btn btn-secondary">Cancelar</a>
+                                </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <x-app.footer />
     </main>
 
-    <!-- ✅ Script para ocultar el mensaje después de 5 segundos -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             setTimeout(function () {
@@ -85,89 +89,89 @@
         });
     </script>
 
-<script>
-let breadcrumbStack = [];
-const folderBeingEdited = {{ $folder->id }};
+    <script>
+        let breadcrumbStack = [];
+        const folderBeingEdited = {{ $folder->id }};
 
-function navigateToFolder(folderId, folderName) {
-    breadcrumbStack.push({ id: folderId, name: folderName });
-    updateBreadcrumb();
-    loadSubfolders(folderId);
-    document.getElementById('parent_id').value = folderId;
-}
+        function navigateToFolder(folderId, folderName) {
+            breadcrumbStack.push({ id: folderId, name: folderName });
+            updateBreadcrumb();
+            loadSubfolders(folderId);
+            document.getElementById('parent_id').value = folderId;
+        }
 
-function selectAsRoot() {
-    breadcrumbStack = [];
-    updateBreadcrumb();
-    document.getElementById('parent_id').value = '';
-    loadRootFolders();
-}
+        function selectAsRoot() {
+            breadcrumbStack = [];
+            updateBreadcrumb();
+            document.getElementById('parent_id').value = '';
+            loadRootFolders();
+        }
 
-function updateBreadcrumb() {
-    const breadcrumb = document.getElementById('breadcrumb');
-    breadcrumb.innerHTML = '';
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = '';
 
-    const rootSpan = document.createElement('span');
-    rootSpan.textContent = 'Inicio';
-    rootSpan.style.cursor = 'pointer';
-    rootSpan.onclick = () => selectAsRoot();
-    breadcrumb.appendChild(rootSpan);
+            const rootSpan = document.createElement('span');
+            rootSpan.textContent = 'Inicio';
+            rootSpan.style.cursor = 'pointer';
+            rootSpan.onclick = () => selectAsRoot();
+            breadcrumb.appendChild(rootSpan);
 
-    breadcrumbStack.forEach((item, index) => {
-        breadcrumb.appendChild(document.createTextNode(' / '));
-        const span = document.createElement('span');
-        span.textContent = item.name;
-        span.onclick = () => goBackTo(index);
-        breadcrumb.appendChild(span);
-    });
-}
-
-function goBackTo(index) {
-    const target = breadcrumbStack[index];
-    breadcrumbStack = breadcrumbStack.slice(0, index + 1);
-    updateBreadcrumb();
-    loadSubfolders(target.id);
-    document.getElementById('parent_id').value = target.id;
-}
-
-function loadSubfolders(parentId) {
-    fetch(`/folders/subfolders?parent_id=${parentId}&current_folder_id=${folderBeingEdited}`)
-        .then(res => res.json())
-        .then(data => {
-            const list = document.getElementById('folder-list');
-            list.innerHTML = '';
-
-            const rootItem = document.createElement('li');
-            rootItem.innerHTML = `<div onclick=\"selectAsRoot()\" class=\"folder-item py-1 text-success\" style=\"cursor: pointer;\">📁 / (Carpeta raíz)</div>`;
-            list.appendChild(rootItem);
-
-            data.forEach(f => {
-                const li = document.createElement('li');
-                li.innerHTML = `<div onclick=\"navigateToFolder(${f.id}, '${f.name.replace(/'/g, "\\'")}')\" class=\"folder-item py-1\" style=\"cursor: pointer;\">📁 ${f.name}</div>`;
-                list.appendChild(li);
+            breadcrumbStack.forEach((item, index) => {
+                breadcrumb.appendChild(document.createTextNode(' / '));
+                const span = document.createElement('span');
+                span.textContent = item.name;
+                span.onclick = () => goBackTo(index);
+                breadcrumb.appendChild(span);
             });
-        });
-}
+        }
 
-function loadRootFolders() {
-    fetch(`/folders/subfolders?parent_id=&current_folder_id=${folderBeingEdited}`)
-        .then(res => res.json())
-        .then(data => {
-            const list = document.getElementById('folder-list');
-            list.innerHTML = '';
+        function goBackTo(index) {
+            const target = breadcrumbStack[index];
+            breadcrumbStack = breadcrumbStack.slice(0, index + 1);
+            updateBreadcrumb();
+            loadSubfolders(target.id);
+            document.getElementById('parent_id').value = target.id;
+        }
 
-            const rootItem = document.createElement('li');
-            rootItem.innerHTML = `<div onclick=\"selectAsRoot()\" class=\"folder-item py-1 text-success\" style=\"cursor: pointer;\">📁 / (Carpeta raíz)</div>`;
-            list.appendChild(rootItem);
+        function loadSubfolders(parentId) {
+            fetch(`/folders/subfolders?parent_id=${parentId}&current_folder_id=${folderBeingEdited}`)
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('folder-list');
+                    list.innerHTML = '';
 
-            data.forEach(f => {
-                const li = document.createElement('li');
-                li.innerHTML = `<div onclick=\"navigateToFolder(${f.id}, '${f.name.replace(/'/g, "\\'")}')\" class=\"folder-item py-1\" style=\"cursor: pointer;\">📁 ${f.name}</div>`;
-                list.appendChild(li);
-            });
-        });
-}
-</script>
+                    const rootItem = document.createElement('li');
+                    rootItem.innerHTML = `<div onclick="selectAsRoot()" class="folder-item py-1 text-success" style="cursor: pointer;">📁 / (Carpeta raíz)</div>`;
+                    list.appendChild(rootItem);
+
+                    data.forEach(f => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<div onclick="navigateToFolder(${f.id}, '${f.name.replace(/'/g, "\\'")}')" class="folder-item py-1" style="cursor: pointer;">📁 ${f.name}</div>`;
+                        list.appendChild(li);
+                    });
+                });
+        }
+
+        function loadRootFolders() {
+            fetch(`/folders/subfolders?parent_id=&current_folder_id=${folderBeingEdited}`)
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('folder-list');
+                    list.innerHTML = '';
+
+                    const rootItem = document.createElement('li');
+                    rootItem.innerHTML = `<div onclick="selectAsRoot()" class="folder-item py-1 text-success" style="cursor: pointer;">📁 / (Carpeta raíz)</div>`;
+                    list.appendChild(rootItem);
+
+                    data.forEach(f => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<div onclick="navigateToFolder(${f.id}, '${f.name.replace(/'/g, "\\'")}')" class="folder-item py-1" style="cursor: pointer;">📁 ${f.name}</div>`;
+                        list.appendChild(li);
+                    });
+                });
+        }
+    </script>
 
 {{-- Estilos Personalizados --}}
 <style>

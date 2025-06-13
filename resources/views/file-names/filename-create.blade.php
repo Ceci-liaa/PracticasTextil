@@ -36,7 +36,12 @@
                                     <input type="text" name="name" class="form-control" required>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <!-- Contenedor flex para alinear los botones -->
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                    <!-- Botón Cancelar alineado a la derecha -->
+                                    <a href="{{ route('file_names.index') }}" class="btn btn-secondary">Cancelar</a>
+                                </div>
                             </form>
                         </div>
                     </div>
