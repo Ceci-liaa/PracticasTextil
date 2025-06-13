@@ -14,25 +14,26 @@
                         <div class="col-xl-4 col-md-6 d-flex flex-column mx-auto">
                             <div class="card card-plain mt-8">
                                 <div class="card-header pb-0 text-left bg-transparent">
-                                    <h3 class="font-weight-black text-dark display-6 text-center">Olvidaste tu Contraseña?</h3>
+                                    <h3 class="font-weight-black text-dark display-6 text-center">Olvidaste tu
+                                        Contraseña?</h3>
                                     <p class="mb-0 text-center">Ingresa tu correo electrónico a continuación</p>
                                 </div>
                                 @if ($errors->any())
-                                <div class="alert alert-danger text-sm" role="alert">
-                                    @foreach ($errors->all() as $error)
-                                    {{ $error }}
-                                    @endforeach
-                                </div>
+                                    <div class="alert alert-danger text-sm" role="alert">
+                                        @foreach ($errors->all() as $error)
+                                            {{ $error }}
+                                        @endforeach
+                                    </div>
                                 @endif
                                 @if (session('status'))
-                                <div class="alert alert-info text-sm" role="alert">
-                                    {{ session('status') }}
-                                </div>
+                                    <div class="alert alert-info text-sm" role="alert">
+                                        {{ session('status') }}
+                                    </div>
                                 @endif
                                 @if (session('error'))
-                                <div class="alert alert-danger text-sm" role="alert">
-                                    {{ session('error') }}
-                                </div>
+                                    <div class="alert alert-danger text-sm" role="alert">
+                                        {{ session('error') }}
+                                    </div>
                                 @endif
                                 <div class="card-body">
                                     <form role="form" action="/forgot-password" method="POST">
@@ -42,13 +43,15 @@
                                                 aria-label="Email" id="email-recovery" name="email"
                                                 value="{{ old('email') }}" required autofocus>
 
-                                            <div id="tooltip-email-recovery" class="tooltip-box card p-2 shadow-sm bg-white text-sm text-danger position-absolute">
+                                            <div id="tooltip-email-recovery"
+                                                class="tooltip-box card p-2 shadow-sm bg-white text-sm text-danger position-absolute">
                                                 Ingresa un correo válido (ej: nombre@dominio.com)
                                             </div>
                                         </div>
 
                                         <div class="text-center">
-                                            <button type="submit" class="my-4 mb-2 btn btn-dark btn-lg w-100">Enlace de recuperación</button>
+                                            <button type="submit" class="my-4 mb-2 btn btn-dark btn-lg w-100">Enlace de
+                                                recuperación</button>
                                         </div>
                                     </form>
                                 </div>
@@ -57,14 +60,7 @@
                         <div class="col-md-6">
                             <div class="position-absolute w-40 top-0 end-0 h-100 d-md-block d-none">
                                 <div class="oblique-image position-absolute fixed-top ms-auto h-100 z-index-0 bg-cover ms-n8"
-                                    style="background-image:url('../assets/img/image-sign-in.jpg')">
-                                    <div
-                                        class="blur mt-12 p-4 text-center border border-white border-radius-md position-absolute fixed-bottom m-4">
-                                        <h2 class="mt-3 text-dark font-weight-bold">Enter our global community of
-                                            developers.</h2>
-                                        <h6 class="text-dark text-sm mt-5">Copyright © 2022 Corporate UI Design System
-                                            by Creative Tim.</h6>
-                                    </div>
+                                    style="background: url('../assets/img/carrusel1.jpg') center center / cover no-repeat;">
                                 </div>
                             </div>
                         </div>
@@ -101,12 +97,12 @@
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const input = document.getElementById('email-recovery');
             const tooltip = document.getElementById('tooltip-email-recovery');
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            input?.addEventListener('input', function() {
+            input?.addEventListener('input', function () {
                 const isValid = regex.test(input.value);
                 if (!isValid) {
                     tooltip.classList.add('show');
